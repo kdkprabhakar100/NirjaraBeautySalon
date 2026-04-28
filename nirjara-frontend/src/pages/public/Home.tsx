@@ -1,5 +1,8 @@
-import ServiceCard from "../components/ServiceCard";
-import { services } from "../data/services";
+import ServiceCard from "../../components/ServiceCard";
+import { services } from "../../data/services";
+import BranchCard from "../../components/BranchCard";
+import { branches } from "../../data/branches";
+
 
 type HomeProps = {
   setCurrentPage: (page: string) => void;
@@ -67,23 +70,23 @@ export default function Home({ setCurrentPage }: HomeProps) {
         ))}
       </section>
 
-      <section className="px-6 py-24 md:px-12">
+      <section className="bg-[#0F0D0A] px-6 py-24 md:px-12">
         <div className="mb-16 text-center">
           <p className="text-xs uppercase tracking-[4px] text-[#C9A84C]">
-            Our Services
+            Our Branches
           </p>
 
           <h2 className="mt-4 font-serif text-5xl font-light text-[#F5F0E8]">
-            The Art of{" "}
-            <span className="italic text-[#C9A84C]">Beautiful</span>
+            Visit Us at{" "}
+            <span className="italic text-[#C9A84C]">Your</span> Location
           </h2>
 
-          <div className="mx-auto mt-6 h-[1px] w-16 bg-[#C9A84C]/60" />
+          <div className="mx-auto mt-8 h-[1px] w-20 bg-[#C9A84C]/60" />
         </div>
 
-        <div className="grid gap-[2px] md:grid-cols-3">
-          {services.map((service) => (
-            <ServiceCard key={service.title} {...service} />
+        <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
+          {branches.map((branch) => (
+            <BranchCard key={branch.name} {...branch} />
           ))}
         </div>
       </section>
