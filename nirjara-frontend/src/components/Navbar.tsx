@@ -3,7 +3,7 @@ type NavbarProps = {
   setCurrentPage: (page: string) => void;
 };
 
-const navItems = ["Home", "Services", "Gallery", "Branches", "Academy", "Blog", "Contact"];
+const navItems = ["Home", "Services", "Gallery", "Branches", "Academy", "Blog", "Contact", "Admin"];
 
 export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
   const goToPage = (page: string) => {
