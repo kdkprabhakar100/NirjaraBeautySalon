@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Course = {
   _id: string;
@@ -9,9 +10,13 @@ type Course = {
   certificate: string;
   image?: string;
 };
+type AcademyProps = {
+  setCurrentPage: (page: string) => void;
+};
 
 export default function Academy() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const navigate = useNavigate();
 
   const fetchCourses = async () => {
     const res = await fetch("http://localhost:5000/api/courses");
@@ -69,9 +74,16 @@ export default function Academy() {
                 <p><strong>Certificate:</strong> {course.certificate}</p>
               </div>
 
-              <button className="mt-6 w-full rounded-full bg-[#E75480] px-6 py-3 text-xs uppercase tracking-[2px] text-white">
-                Enroll Now
-              </button>
+            <button
+              onClick={() => {
+                localStorage.setItem("bookingType", "course");
+                localStorage.setItem("selectedCourse", course.title);
+                navigate("/booking");
+              }}
+              className="mt-6 w-full rounded-full bg-[#E75480] px-6 py-3 text-xs uppercase tracking-[2px] text-white"
+            >
+              Enroll Now
+            </button>
             </div>
           ))}
 

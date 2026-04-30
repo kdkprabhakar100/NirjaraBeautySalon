@@ -5,45 +5,52 @@ type Service = {
   title: string;
 };
 
-type Branch = {
-  name: string;
+type Course = {
+  _id: string;
+  title: string;
 };
 
-const branches: Branch[] = [
-  { name: "Teku Branch" },
-  { name: "Chabahil Branch" },
-];
+const branches = [{ name: "Teku Branch" }, { name: "Chabahil Branch" }];
 
 export default function Booking() {
   const [services, setServices] = useState<Service[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
 
+  const [type, setType] = useState("service");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [service, setService] = useState("");
+  const [selectedItem, setSelectedItem] = useState("");
   const [branch, setBranch] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:5000/api/services")
       .then((res) => res.json())
       .then((data) => setServices(data));
+
+    fetch("http://localhost:5000/api/courses")
+      .then((res) => res.json())
+      .then((data) => setCourses(data));
+
+    const savedType = localStorage.getItem("bookingType");
+    const savedCourse = localStorage.getItem("selectedCourse");
+
+    if (savedType === "course") {
+      setType("course");
+    }
+
+    if (savedCourse) {
+      setSelectedItem(savedCourse);
+    }
+
+    localStorage.removeItem("bookingType");
+    localStorage.removeItem("selectedCourse");
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const booking = {
-      name,
-      phone,
-      service,
-      branch,
-      date,
-      time,
-    };
-
     setLoading(true);
 
     await fetch("http://localhost:5000/api/bookings", {
@@ -51,20 +58,35 @@ export default function Booking() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(booking),
+      body: JSON.stringify({
+        name,
+        phone,
+        type,
+        service: type === "service" ? selectedItem : "",
+        course: type === "course" ? selectedItem : "",
+        branch,
+        date,
+        time,
+      }),
     });
 
     setLoading(false);
-
-    alert("Booking submitted successfully!");
+    alert(
+      type === "service"
+        ? "Service booking submitted successfully!"
+        : "Course enrollment submitted successfully!"
+    );
 
     setName("");
     setPhone("");
-    setService("");
+    setSelectedItem("");
     setBranch("");
     setDate("");
     setTime("");
+    setType("service");
   };
+
+  const items = type === "service" ? services : courses;
 
   return (
     <main className="min-h-screen bg-[#FFF5F8] px-6 pb-24 pt-36 text-[#3A2A2F] md:px-12">
@@ -75,13 +97,11 @@ export default function Booking() {
           </p>
 
           <h1 className="mt-4 font-serif text-6xl font-light">
-            Book Your{" "}
-            <span className="italic text-[#E75480]">Appointment</span>
+            Book or <span className="italic text-[#E75480]">Enroll</span>
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl leading-8 text-[#8A6F78]">
-            Select your service, preferred branch, date, and time. Our team will
-            contact you shortly to confirm your appointment.
+            Book a salon service or enroll in a professional academy course.
           </p>
 
           <div className="mx-auto mt-8 h-[1px] w-20 bg-[#E75480]/50" />
@@ -90,20 +110,21 @@ export default function Booking() {
         <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2">
           <div className="rounded-3xl bg-white p-8 shadow-sm">
             <h2 className="font-serif text-4xl text-[#E75480]">
-              How Booking Works
+              How It Works
             </h2>
 
             <div className="mt-8 space-y-6">
               {[
-                "Choose your service",
-                "Select preferred branch",
-                "Pick date and time",
+                "Choose booking or enrollment",
+                "Select service or course",
+                "Pick branch, date, and time",
                 "Submit your contact details",
               ].map((step, index) => (
                 <div key={step} className="flex gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FCE7EF] text-sm font-semibold text-[#E75480]">
                     {index + 1}
                   </div>
+
                   <p className="pt-2 text-[#8A6F78]">{step}</p>
                 </div>
               ))}
@@ -115,6 +136,18 @@ export default function Booking() {
             className="rounded-3xl bg-white p-8 shadow-sm"
           >
             <div className="grid gap-5">
+              <select
+                value={type}
+                onChange={(e) => {
+                  setType(e.target.value);
+                  setSelectedItem("");
+                }}
+                className="rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 outline-none"
+              >
+                <option value="service">Service Booking</option>
+                <option value="course">Course Enrollment</option>
+              </select>
+
               <input
                 type="text"
                 placeholder="Full Name"
@@ -134,13 +167,16 @@ export default function Booking() {
               />
 
               <select
-                value={service}
-                onChange={(e) => setService(e.target.value)}
+                value={selectedItem}
+                onChange={(e) => setSelectedItem(e.target.value)}
                 required
                 className="rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 outline-none"
               >
-                <option value="">Select Service</option>
-                {services.map((item) => (
+                <option value="">
+                  {type === "service" ? "Select Service" : "Select Course"}
+                </option>
+
+                {items.map((item) => (
                   <option key={item._id} value={item.title}>
                     {item.title}
                   </option>
@@ -183,7 +219,11 @@ export default function Booking() {
                 disabled={loading}
                 className="rounded-full bg-[#E75480] px-8 py-4 text-xs font-medium uppercase tracking-[2px] text-white shadow-lg transition hover:bg-[#C93D68] disabled:opacity-60"
               >
-                {loading ? "Submitting..." : "Confirm Booking"}
+                {loading
+                  ? "Submitting..."
+                  : type === "service"
+                  ? "Confirm Booking"
+                  : "Confirm Enrollment"}
               </button>
             </div>
           </form>

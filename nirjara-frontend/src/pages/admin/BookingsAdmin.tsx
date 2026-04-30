@@ -11,11 +11,21 @@ type Booking = {
   status: "Pending" | "Confirmed" | "Cancelled";
 };
 
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+});
+
 export default function BookingsAdmin() {
   const [bookings, setBookings] = useState<Booking[]>([]);
 
   const fetchBookings = async () => {
-    const res = await fetch("http://localhost:5000/api/bookings");
+    const res = await fetch("http://localhost:5000/api/bookings", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      },
+    });
+
     const data = await res.json();
     setBookings(data);
   };
@@ -27,7 +37,7 @@ export default function BookingsAdmin() {
   const updateStatus = async (id: string, status: Booking["status"]) => {
     await fetch(`http://localhost:5000/api/bookings/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ status }),
     });
 
@@ -39,6 +49,9 @@ export default function BookingsAdmin() {
 
     await fetch(`http://localhost:5000/api/bookings/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      },
     });
 
     fetchBookings();
@@ -53,7 +66,7 @@ export default function BookingsAdmin() {
       </p>
 
       <div className="mt-10 overflow-x-auto rounded-3xl bg-white shadow-sm">
-        <table className="w-full min-w-[900px] border-collapse">
+        <table className="w-full min-w-[950px] border-collapse">
           <thead className="bg-[#FCE7EF] text-left text-sm text-[#E75480]">
             <tr>
               <th className="p-5">Customer</th>
@@ -74,11 +87,25 @@ export default function BookingsAdmin() {
                   {booking.name}
                 </td>
 
-                <td className="p-5 text-sm text-[#8A6F78]">{booking.phone}</td>
-                <td className="p-5 text-sm text-[#8A6F78]">{booking.service}</td>
-                <td className="p-5 text-sm text-[#8A6F78]">{booking.branch}</td>
-                <td className="p-5 text-sm text-[#8A6F78]">{booking.date}</td>
-                <td className="p-5 text-sm text-[#8A6F78]">{booking.time}</td>
+                <td className="p-5 text-sm text-[#8A6F78]">
+                  {booking.phone}
+                </td>
+
+                <td className="p-5 text-sm text-[#8A6F78]">
+                  {booking.service}
+                </td>
+
+                <td className="p-5 text-sm text-[#8A6F78]">
+                  {booking.branch}
+                </td>
+
+                <td className="p-5 text-sm text-[#8A6F78]">
+                  {booking.date}
+                </td>
+
+                <td className="p-5 text-sm text-[#8A6F78]">
+                  {booking.time}
+                </td>
 
                 <td className="p-5">
                   <span

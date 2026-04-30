@@ -3,6 +3,7 @@ import BranchCard from "../../components/BranchCard";
 import { services } from "../../data/services";
 import { branches } from "../../data/branches";
 import Gallery from "../../components/Gallery";
+import { useNavigate } from "react-router-dom";
 
 type HomeProps = {
   setCurrentPage: (page: string) => void;
@@ -15,7 +16,9 @@ const stats = [
   { number: "200+", label: "Certified Graduates" },
 ];
 
-export default function Home({ setCurrentPage }: HomeProps) {
+export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <main className="min-h-screen bg-[#FFF5F8] text-[#3A2A2F]">
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 text-center">
@@ -39,17 +42,10 @@ export default function Home({ setCurrentPage }: HomeProps) {
 
           <div className="mt-12 flex flex-col justify-center gap-5 sm:flex-row">
             <button
-              onClick={() => setCurrentPage("Booking")}
+              onClick={() => navigate("/booking")}
               className="rounded-full bg-[#E75480] px-10 py-4 text-xs font-medium uppercase tracking-[2px] text-white shadow-lg transition hover:bg-[#C93D68]"
             >
               Book a Service
-            </button>
-
-            <button
-              onClick={() => setCurrentPage("Services")}
-              className="rounded-full border border-[#E75480]/40 bg-white px-10 py-4 text-xs uppercase tracking-[2px] text-[#E75480] shadow-sm transition hover:border-[#E75480]"
-            >
-              Explore Services
             </button>
           </div>
         </div>

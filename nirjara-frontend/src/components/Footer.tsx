@@ -1,8 +1,15 @@
-type FooterProps = {
-  setCurrentPage: (page: string) => void;
-};
+import { Link } from "react-router-dom";
 
-export default function Footer({ setCurrentPage }: FooterProps) {
+export default function Footer() {
+  const pages = [
+    { label: "Home", path: "/" },
+    { label: "Services", path: "/services" },
+    { label: "Branches", path: "/branches" },
+    { label: "Academy", path: "/academy" },
+    { label: "Blog", path: "/blog" },
+    { label: "Contact", path: "/contact" },
+  ];
+
   return (
     <footer className="border-t border-[#E75480]/10 bg-white px-6 py-14 text-[#3A2A2F] md:px-12">
       <div className="grid gap-10 md:grid-cols-4">
@@ -23,20 +30,11 @@ export default function Footer({ setCurrentPage }: FooterProps) {
           </h3>
 
           <div className="mt-5 flex flex-col gap-3 text-sm text-[#8A6F78]">
-            {["Home", "Services", "Branches", "Academy", "Blog", "Contact"].map(
-              (page) => (
-                <button
-                  key={page}
-                  onClick={() => {
-                    setCurrentPage(page);
-                    window.scrollTo(0, 0);
-                  }}
-                  className="text-left hover:text-[#E75480]"
-                >
-                  {page}
-                </button>
-              )
-            )}
+            {pages.map((page) => (
+              <Link key={page.path} to={page.path} className="hover:text-[#E75480]">
+                {page.label}
+              </Link>
+            ))}
           </div>
         </div>
 
@@ -49,6 +47,10 @@ export default function Footer({ setCurrentPage }: FooterProps) {
             <p>Teku, Kathmandu</p>
             <p>Chabahil, Kathmandu</p>
             <p>+977 98XXXXXXXX</p>
+
+            <Link to="/admin/login" className="block pt-2 text-xs hover:text-[#E75480]">
+              Admin Login
+            </Link>
           </div>
         </div>
       </div>

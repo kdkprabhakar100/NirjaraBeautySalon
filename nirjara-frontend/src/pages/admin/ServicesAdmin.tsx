@@ -29,6 +29,11 @@ const emptyForm: Service = {
   image: "/images/salon.png",
 };
 
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+});
+
 export default function ServicesAdmin() {
   const [services, setServices] = useState<Service[]>([]);
   const [form, setForm] = useState<Service>(emptyForm);
@@ -64,14 +69,16 @@ export default function ServicesAdmin() {
       return;
     }
 
-await fetch("http://localhost:5000/api/services", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-  },
-  body: JSON.stringify(finalService),
-});
+    await fetch(
+      editingId
+        ? `http://localhost:5000/api/services/${editingId}`
+        : "http://localhost:5000/api/services",
+      {
+        method: editingId ? "PUT" : "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(finalService),
+      }
+    );
 
     await fetchServices();
     resetForm();
@@ -89,19 +96,36 @@ await fetch("http://localhost:5000/api/services", {
 
     await fetch(`http://localhost:5000/api/services/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      },
     });
 
     await fetchServices();
   };
 
+  const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const res = await fetch("http://localhost:5000/api/upload", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      },
+      body: formData,
+    });
+
+    const data = await res.json();
+    setForm({ ...form, image: data.imageUrl });
+  };
+
   return (
     <div>
-      <div>
-        <h1 className="font-serif text-5xl text-[#E75480]">Services</h1>
-        <p className="mt-2 text-[#8A6F78]">
-          Create, edit, delete, and manage website services.
-        </p>
-      </div>
+      <h1 className="font-serif text-5xl text-[#E75480]">Services</h1>
+      <p className="mt-2 text-[#8A6F78]">
+        Create, edit, delete, and manage website services.
+      </p>
 
       <form
         onSubmit={handleSubmit}
@@ -149,26 +173,15 @@ await fetch("http://localhost:5000/api/services", {
           </select>
 
           <input
-              type="file"
-              accept="image/png, image/jpeg, image/jpg, image/webp"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-
-                const formData = new FormData();
-                formData.append("image", file);
-
-                const res = await fetch("http://localhost:5000/api/upload", {
-                  method: "POST",
-                  body: formData,
-                });
-
-                const data = await res.json();
-
-                setForm({ ...form, image: data.imageUrl });
-              }}
-              className="rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 outline-none"
-            />
+            type="file"
+            accept="image/png, image/jpeg, image/jpg, image/webp"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              handleImageUpload(file);
+            }}
+            className="rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 outline-none"
+          />
 
           {form.category === "Other" && (
             <input

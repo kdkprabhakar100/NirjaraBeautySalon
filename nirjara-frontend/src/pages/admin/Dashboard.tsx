@@ -1,25 +1,53 @@
+import { useEffect, useState } from "react";
+
+type Stats = {
+  services: number;
+  gallery: number;
+  courses: number;
+  bookings: number;
+  pendingBookings: number;
+  confirmedBookings: number;
+  cancelledBookings: number;
+};
+
 export default function Dashboard() {
-  const stats = [
-    { label: "Total Bookings", value: "24" },
-    { label: "Pending Bookings", value: "6" },
-    { label: "Services", value: "12" },
-    { label: "Gallery Photos", value: "8" },
+  const [stats, setStats] = useState<Stats | null>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/dashboard/stats", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(setStats);
+  }, []);
+
+  if (!stats) return <p className="text-[#8A6F78]">Loading dashboard...</p>;
+
+  const cards = [
+    ["Services", stats.services],
+    ["Bookings", stats.bookings],
+    ["Pending", stats.pendingBookings],
+    ["Confirmed", stats.confirmedBookings],
+    ["Cancelled", stats.cancelledBookings],
+    ["Gallery Photos", stats.gallery],
+    ["Courses", stats.courses],
   ];
 
   return (
     <div>
       <h1 className="font-serif text-5xl text-[#E75480]">Dashboard</h1>
-      <p className="mt-2 text-[#8A6F78]">Welcome to Nirjara admin panel.</p>
+      <p className="mt-2 text-[#8A6F78]">
+        Live overview from database.
+      </p>
 
       <div className="mt-10 grid gap-6 md:grid-cols-4">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-3xl bg-white p-6 shadow-sm"
-          >
-            <p className="text-sm text-[#8A6F78]">{stat.label}</p>
+        {cards.map(([label, value]) => (
+          <div key={label} className="rounded-3xl bg-white p-6 shadow-sm">
+            <p className="text-sm text-[#8A6F78]">{label}</p>
             <h2 className="mt-3 font-serif text-4xl text-[#E75480]">
-              {stat.value}
+              {value}
             </h2>
           </div>
         ))}

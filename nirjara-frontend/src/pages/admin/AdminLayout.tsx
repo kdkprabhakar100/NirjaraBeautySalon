@@ -1,18 +1,28 @@
+import { NavLink, useNavigate } from "react-router-dom";
+
 type AdminLayoutProps = {
   children: React.ReactNode;
-  activeAdminPage: string;
-  setActiveAdminPage: (page: string) => void;
-  setCurrentPage: (page: string) => void;
 };
 
-const adminLinks = ["Dashboard", "Bookings", "Services", "Gallery", "Courses"];
+const adminLinks = [
+  { label: "Dashboard", path: "/admin/dashboard" },
+  { label: "Bookings", path: "/admin/bookings" },
+  { label: "Services", path: "/admin/services" },
+  { label: "Gallery", path: "/admin/gallery" },
+  { label: "Courses", path: "/admin/courses" },
+  { label: "Messages", path: "/admin/messages" },
+  { label: "Blogs", path: "/admin/blogs" },
+];
 
-export default function AdminLayout({
-  children,
-  activeAdminPage,
-  setActiveAdminPage,
-  setCurrentPage,
-}: AdminLayoutProps) {
+export default function AdminLayout({ children }: AdminLayoutProps) {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminEmail");
+    navigate("/admin/login");
+  };
+
   return (
     <main className="flex min-h-screen bg-[#FFF5F8] text-[#3A2A2F]">
       <aside className="w-64 border-r border-[#E75480]/10 bg-white p-6">
@@ -20,33 +30,31 @@ export default function AdminLayout({
 
         <div className="mt-10 space-y-3">
           {adminLinks.map((link) => (
-            <button
-              key={link}
-              onClick={() => setActiveAdminPage(link)}
-              className={`w-full rounded-xl px-4 py-3 text-left text-sm transition ${
-                activeAdminPage === link
-                  ? "bg-[#E75480] text-white"
-                  : "text-[#8A6F78] hover:bg-[#FCE7EF] hover:text-[#E75480]"
-              }`}
+            <NavLink
+              key={link.path}
+              to={link.path}
+              className={({ isActive }) =>
+                `block rounded-xl px-4 py-3 text-sm transition ${
+                  isActive
+                    ? "bg-[#E75480] text-white"
+                    : "text-[#8A6F78] hover:bg-[#FCE7EF] hover:text-[#E75480]"
+                }`
+              }
             >
-              {link}
-            </button>
+              {link.label}
+            </NavLink>
           ))}
         </div>
 
         <button
-          onClick={() => setCurrentPage("Home")}
+          onClick={() => navigate("/")}
           className="mt-10 w-full rounded-xl border border-[#E75480] px-4 py-3 text-sm text-[#E75480]"
         >
           View Website
         </button>
-        
+
         <button
-          onClick={() => {
-            localStorage.removeItem("adminToken");
-            localStorage.removeItem("adminEmail");
-            setCurrentPage("Login");
-          }}
+          onClick={logout}
           className="mt-4 w-full rounded-xl bg-[#FCE7EF] px-4 py-3 text-sm text-[#E75480]"
         >
           Logout

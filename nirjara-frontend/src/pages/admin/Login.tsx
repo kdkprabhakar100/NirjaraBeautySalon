@@ -1,10 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-type LoginProps = {
-  setCurrentPage: (page: string) => void;
-};
+export default function Login() {
+  const navigate = useNavigate();
 
-export default function Login({ setCurrentPage }: LoginProps) {
   const [email, setEmail] = useState("admin@nirjara.com");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,7 +32,7 @@ export default function Login({ setCurrentPage }: LoginProps) {
       localStorage.setItem("adminToken", data.token);
       localStorage.setItem("adminEmail", data.admin.email);
 
-      setCurrentPage("Admin");
+      navigate("/admin/dashboard");
     } catch (error) {
       alert("Server error. Please make sure backend is running.");
     } finally {
@@ -79,6 +78,14 @@ export default function Login({ setCurrentPage }: LoginProps) {
             className="w-full rounded-full bg-[#E75480] py-4 text-xs uppercase tracking-[2px] text-white disabled:opacity-60"
           >
             {loading ? "Logging in..." : "Login"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="w-full text-sm text-[#8A6F78] hover:text-[#E75480]"
+          >
+            Back to website
           </button>
         </div>
       </form>
