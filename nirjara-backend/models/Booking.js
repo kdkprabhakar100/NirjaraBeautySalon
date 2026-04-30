@@ -4,6 +4,7 @@ const bookingSchema = new mongoose.Schema(
   {
     name: String,
     phone: String,
+    email: String,
 
     // NEW: type (service or course)
     type: {
@@ -18,7 +19,6 @@ const bookingSchema = new mongoose.Schema(
     branch: String,
     date: String,
     time: String,
-
     status: {
       type: String,
       default: "Pending",

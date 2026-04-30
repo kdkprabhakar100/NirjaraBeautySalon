@@ -4,6 +4,8 @@ const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+const sendEmail = require("../utils/sendEmail");
+
 // GET
 router.get("/", protect, async (req, res) => {
   const bookings = await Booking.find().sort({ createdAt: -1 });
@@ -25,7 +27,49 @@ router.put("/:id", protect, async (req, res) => {
     req.body,
     { new: true }
   );
-  res.json(booking);
+
+  // SEND EMAIL
+// SEND EMAIL
+if (booking.email) {
+  const item = booking.type === "course" ? booking.course : booking.service;
+
+  const subject = `Booking ${booking.status} - Nirjara Beauty`;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; background-color: #fff5f8; padding: 30px;">
+      <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 18px;">
+        <h2 style="color: #E75480; margin-bottom: 10px;">Nirjara Beauty</h2>
+
+        <p>Hello <strong>${booking.name}</strong>,</p>
+
+        <p>
+          Your ${
+            booking.type === "course" ? "course enrollment" : "service booking"
+          } for <strong>${item}</strong> has been
+          <strong style="color: ${
+            booking.status === "Confirmed" ? "green" : "red"
+          };">
+            ${booking.status}
+          </strong>.
+        </p>
+
+        <div style="margin-top: 20px; padding: 15px; background-color: #fff5f8; border-radius: 12px;">
+          <p><strong>Branch:</strong> ${booking.branch}</p>
+          <p><strong>Date:</strong> ${booking.date}</p>
+          <p><strong>Time:</strong> ${booking.time}</p>
+        </div>
+
+        <p style="margin-top: 25px;">
+          Thank you for choosing Nirjara Beauty 💖
+        </p>
+      </div>
+    </div>
+  `;
+
+  await sendEmail(booking.email, subject, html);
+}
+
+res.json(booking);
 });
 
 // DELETE
