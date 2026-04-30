@@ -11,7 +11,9 @@ router.get("/", protect, async (req, res) => {
 });
 
 // POST
-router.post("/", protect, async (req, res) => {
+router.post("/", async (req, res) => {
+  console.log("BOOKING BODY:", req.body);
+
   const booking = await Booking.create(req.body);
   res.status(201).json(booking);
 });

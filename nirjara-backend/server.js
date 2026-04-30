@@ -9,7 +9,10 @@ const uploadRoutes = require("./routes/uploadRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
-const courseRoutes = require("./routes/courseRoutes");  
+const courseRoutes = require("./routes/courseRoutes"); 
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const blogRoutes = require("./routes/blogRoutes");
 
 // Auth routes
 const authRoutes = require("./routes/authRoutes");
@@ -33,6 +36,9 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/blogs", blogRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
