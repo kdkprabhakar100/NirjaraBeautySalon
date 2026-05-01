@@ -13,7 +13,7 @@ export default function ContactMessagesAdmin() {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const fetchMessages = async () => {
-    const res = await fetch("http://localhost:5000/api/contact", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
       },
@@ -28,7 +28,7 @@ export default function ContactMessagesAdmin() {
   }, []);
 
   const markAsRead = async (id: string) => {
-    await fetch(`http://localhost:5000/api/contact/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/contact/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export default function ContactMessagesAdmin() {
   const deleteMessage = async (id: string) => {
     if (!confirm("Delete this message?")) return;
 
-    await fetch(`http://localhost:5000/api/contact/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/contact/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("adminToken")}`,

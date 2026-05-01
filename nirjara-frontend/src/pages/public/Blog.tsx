@@ -15,7 +15,7 @@ export default function Blog() {
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/blogs")
+    fetch("import.meta.env.VITE_API_URL/api/blogs")
       .then((res) => res.json())
       .then((data) => setBlogs(data));
   }, []);

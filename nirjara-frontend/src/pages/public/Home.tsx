@@ -5,10 +5,6 @@ import { branches } from "../../data/branches";
 import Gallery from "../../components/Gallery";
 import { useNavigate } from "react-router-dom";
 
-type HomeProps = {
-  setCurrentPage: (page: string) => void;
-};
-
 const stats = [
   { number: "12+", label: "Years of Excellence" },
   { number: "2", label: "Kathmandu Branches" },
@@ -21,7 +17,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#FFF5F8] text-[#3A2A2F]">
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 text-center">
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pt-24 text-center">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(231,84,128,0.18),transparent_65%)]" />
         <div className="absolute -right-24 top-24 h-72 w-72 rounded-full bg-[#FCE7EF] blur-3xl" />
         <div className="absolute -left-24 bottom-24 h-72 w-72 rounded-full bg-[#FADADD] blur-3xl" />
@@ -31,12 +27,12 @@ export default function Home() {
             Kathmandu&apos;s Premier Beauty Destination
           </p>
 
-          <h1 className="font-serif text-6xl font-light leading-none md:text-8xl">
+          <h1 className="font-serif text-5xl font-light leading-none sm:text-6xl md:text-8xl">
             Nirjara <br />
             <span className="italic text-[#E75480]">Beauty</span>
           </h1>
 
-          <p className="mt-6 font-serif text-2xl italic text-[#8A6F78]">
+          <p className="mt-6 font-serif text-xl italic text-[#8A6F78] md:text-2xl">
             Salon & Academy — Where Beauty Meets Confidence
           </p>
 
@@ -55,11 +51,12 @@ export default function Home() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="border-r border-[#E75480]/10 p-8 text-center"
+            className="border-r border-[#E75480]/10 p-5 text-center md:p-8"
           >
-            <h2 className="font-serif text-4xl text-[#E75480]">
+            <h2 className="font-serif text-3xl text-[#E75480] md:text-4xl">
               {stat.number}
             </h2>
+
             <p className="mt-2 text-xs uppercase tracking-[2px] text-[#8A6F78]">
               {stat.label}
             </p>
@@ -67,13 +64,13 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="px-6 py-24 md:px-12">
-        <div className="mb-16 text-center">
+      <section className="px-6 py-20 md:px-12 md:py-24">
+        <div className="mb-14 text-center md:mb-16">
           <p className="text-xs uppercase tracking-[4px] text-[#E75480]">
             Our Services
           </p>
 
-          <h2 className="mt-4 font-serif text-5xl font-light text-[#3A2A2F]">
+          <h2 className="mt-4 font-serif text-4xl font-light text-[#3A2A2F] md:text-5xl">
             The Art of{" "}
             <span className="italic text-[#E75480]">Beautiful</span>
           </h2>
@@ -81,29 +78,28 @@ export default function Home() {
           <div className="mx-auto mt-6 h-[1px] w-16 bg-[#E75480]/50" />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service) => (
             <ServiceCard key={service.title} {...service} />
           ))}
         </div>
       </section>
 
-       <Gallery />
+      <Gallery />
 
-      <section className="bg-white px-6 py-24 md:px-12">
-        <div className="mb-16 text-center">
+      <section className="bg-white px-6 py-20 md:px-12 md:py-24">
+        <div className="mb-14 text-center md:mb-16">
           <p className="text-xs uppercase tracking-[4px] text-[#E75480]">
             Our Branches
           </p>
 
-          <h2 className="mt-4 font-serif text-5xl font-light text-[#3A2A2F]">
+          <h2 className="mt-4 font-serif text-4xl font-light text-[#3A2A2F] md:text-5xl">
             Visit Us at{" "}
             <span className="italic text-[#E75480]">Your</span> Location
           </h2>
 
           <div className="mx-auto mt-8 h-[1px] w-20 bg-[#E75480]/50" />
         </div>
-        
 
         <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
           {branches.map((branch) => (
@@ -111,8 +107,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-     
     </main>
   );
 }

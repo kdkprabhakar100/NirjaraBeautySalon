@@ -18,7 +18,7 @@ export default function Services() {
   const [activeCategory, setActiveCategory] = useState("All");
 
   const fetchServices = async () => {
-    const res = await fetch("http://localhost:5000/api/services");
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/services`);
     const data = await res.json();
     setServices(data);
   };

@@ -15,7 +15,7 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
 
-    await fetch("http://localhost:5000/api/contact", {
+    await fetch("import.meta.env.VITE_API_URL/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

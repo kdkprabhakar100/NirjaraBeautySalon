@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/dashboard/stats", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/dashboard/stats`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
       },

@@ -19,7 +19,7 @@ export default function Academy() {
   const navigate = useNavigate();
 
   const fetchCourses = async () => {
-    const res = await fetch("http://localhost:5000/api/courses");
+    const res = await fetch("import.meta.env.VITE_API_URL/api/courses");
     const data = await res.json();
     setCourses(data);
   };

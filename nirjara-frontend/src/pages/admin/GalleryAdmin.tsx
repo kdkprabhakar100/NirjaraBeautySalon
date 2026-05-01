@@ -1,45 +1,43 @@
 import { useEffect, useState } from "react";
 
-type GalleryItem = {
+type ImageItem = {
   _id?: string;
   title: string;
+  category: string;
   image: string;
 };
 
+const emptyItem: ImageItem = {
+  title: "",
+  category: "Salon",
+  image: "",
+};
+
 const getAuthHeaders = () => ({
-  "Content-Type": "application/json",
   Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
 });
 
 export default function GalleryAdmin() {
-  const [gallery, setGallery] = useState<GalleryItem[]>([]);
-  const [form, setForm] = useState<GalleryItem>({ title: "", image: "" });
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [items, setItems] = useState<ImageItem[]>([]);
+  const [form, setForm] = useState<ImageItem>(emptyItem);
 
-  const fetchGallery = async () => {
-    const res = await fetch("http://localhost:5000/api/gallery");
+  const fetchItems = async () => {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/gallery`);
     const data = await res.json();
-    setGallery(data);
+    setItems(data);
   };
 
   useEffect(() => {
-    fetchGallery();
+    fetchItems();
   }, []);
 
-  const resetForm = () => {
-    setForm({ title: "", image: "" });
-    setEditingId(null);
-  };
-
-  const handleImageUpload = async (file: File) => {
+  const handleUpload = async (file: File) => {
     const formData = new FormData();
     formData.append("image", file);
 
-    const res = await fetch("http://localhost:5000/api/upload", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
+      headers: getAuthHeaders(),
       body: formData,
     });
 
@@ -50,139 +48,120 @@ export default function GalleryAdmin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.title || !form.image) {
-      alert("Please add title and image");
+    if (!form.image) {
+      alert("Please upload an image.");
       return;
     }
 
-    await fetch(
-      editingId
-        ? `http://localhost:5000/api/gallery/${editingId}`
-        : "http://localhost:5000/api/gallery",
-      {
-        method: editingId ? "PUT" : "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(form),
-      }
-    );
+    await fetch(`${import.meta.env.VITE_API_URL}/api/gallery`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+      },
+      body: JSON.stringify(form),
+    });
 
-    resetForm();
-    fetchGallery();
-  };
-
-  const handleEdit = (item: GalleryItem) => {
-    setForm(item);
-    setEditingId(item._id || null);
-    window.scrollTo(0, 0);
+    setForm(emptyItem);
+    fetchItems();
   };
 
   const handleDelete = async (id?: string) => {
     if (!id) return;
-    if (!confirm("Delete this photo?")) return;
+    if (!confirm("Delete this image?")) return;
 
-    await fetch(`http://localhost:5000/api/gallery/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/gallery/${id}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
+      headers: getAuthHeaders(),
     });
 
-    fetchGallery();
+    fetchItems();
   };
 
   return (
     <div>
-      <h1 className="font-serif text-5xl text-[#E75480]">Gallery</h1>
+      <h1 className="font-serif text-4xl text-[#E75480] md:text-5xl">
+        Gallery
+      </h1>
 
-      <p className="mt-2 text-[#8A6F78]">
-        Add, edit, delete, and manage gallery slider photos.
+      <p className="mt-2 text-sm text-[#8A6F78] md:text-base">
+        Upload and manage gallery images.
       </p>
 
+      {/* Upload Form */}
       <form
         onSubmit={handleSubmit}
-        className="mt-8 rounded-3xl bg-white p-6 shadow-sm"
+        className="mt-8 rounded-3xl bg-white p-4 shadow-sm md:p-6"
       >
-        <h2 className="font-serif text-3xl text-[#3A2A2F]">
-          {editingId ? "Edit Photo" : "Add Photo"}
+        <h2 className="font-serif text-2xl text-[#3A2A2F] md:text-3xl">
+          Add Image
         </h2>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <input
-            placeholder="Photo title"
+            placeholder="Title"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 outline-none"
+            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:text-base"
+          />
+
+          <input
+            placeholder="Category"
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:text-base"
           />
 
           <input
             type="file"
-            accept="image/png, image/jpeg, image/jpg, image/webp"
+            accept="image/*"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
-              handleImageUpload(file);
+              handleUpload(file);
             }}
-            className="rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 outline-none"
+            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:col-span-2"
           />
         </div>
 
         {form.image && (
-          <div className="mt-5">
-            <p className="mb-2 text-sm text-[#8A6F78]">Image Preview</p>
-            <img
-              src={form.image}
-              alt="Preview"
-              className="h-48 w-full max-w-md rounded-2xl object-cover"
-            />
-          </div>
+          <img
+            src={form.image}
+            alt="Preview"
+            className="mt-5 h-44 w-full rounded-2xl object-cover md:max-w-md"
+          />
         )}
 
-        <div className="mt-6 flex gap-3">
-          <button className="rounded-full bg-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-white">
-            {editingId ? "Update Photo" : "Add Photo"}
-          </button>
-
-          {editingId && (
-            <button
-              type="button"
-              onClick={resetForm}
-              className="rounded-full border border-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-[#E75480]"
-            >
-              Cancel
-            </button>
-          )}
-        </div>
+        <button className="mt-6 rounded-full bg-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-white">
+          Upload Image
+        </button>
       </form>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
-        {gallery.map((item) => (
+      {/* Gallery Grid */}
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {items.map((item) => (
           <div
             key={item._id}
-            className="group relative overflow-hidden rounded-3xl bg-white shadow-sm"
+            className="overflow-hidden rounded-3xl bg-white shadow-sm"
           >
             <img
               src={item.image}
               alt={item.title}
-              className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
+              className="h-40 w-full object-cover"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+            <div className="p-4">
+              <h3 className="truncate font-medium text-[#3A2A2F]">
+                {item.title || "Untitled"}
+              </h3>
 
-            <div className="absolute bottom-0 w-full p-5">
-              <h2 className="font-serif text-2xl text-white">{item.title}</h2>
-            </div>
-
-            <div className="absolute right-4 top-4 flex gap-2">
-              <button
-                onClick={() => handleEdit(item)}
-                className="rounded-full bg-white/90 px-4 py-2 text-xs text-[#E75480]"
-              >
-                Edit
-              </button>
+              <p className="mt-1 text-xs text-[#8A6F78]">
+                {item.category}
+              </p>
 
               <button
                 onClick={() => handleDelete(item._id)}
-                className="rounded-full bg-white/90 px-4 py-2 text-xs text-[#E75480]"
+                className="mt-3 w-full rounded-full bg-[#FCE7EF] px-4 py-2 text-xs text-[#E75480]"
               >
                 Delete
               </button>
@@ -190,10 +169,10 @@ export default function GalleryAdmin() {
           </div>
         ))}
 
-        {gallery.length === 0 && (
-          <p className="col-span-3 text-center text-[#8A6F78]">
-            No gallery images available.
-          </p>
+        {items.length === 0 && (
+          <div className="col-span-full rounded-3xl bg-white p-8 text-center text-[#8A6F78] shadow-sm">
+            No images uploaded.
+          </div>
         )}
       </div>
     </div>

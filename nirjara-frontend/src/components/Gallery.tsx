@@ -11,11 +11,15 @@ export default function Gallery() {
   const [items, setItems] = useState<Item[]>([]);
   const [index, setIndex] = useState(0);
 
-  const fetchGallery = async () => {
-    const res = await fetch("http://localhost:5000/api/gallery");
+const fetchGallery = async () => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/gallery`);
     const data = await res.json();
     setItems(data);
-  };
+  } catch (error) {
+    console.error("Gallery fetch error:", error);
+  }
+};
 
   useEffect(() => {
     fetchGallery();
