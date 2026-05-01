@@ -10,16 +10,13 @@ type Course = {
   certificate: string;
   image?: string;
 };
-type AcademyProps = {
-  setCurrentPage: (page: string) => void;
-};
 
 export default function Academy() {
   const [courses, setCourses] = useState<Course[]>([]);
   const navigate = useNavigate();
 
   const fetchCourses = async () => {
-    const res = await fetch("import.meta.env.VITE_API_URL/api/courses");
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/courses`);
     const data = await res.json();
     setCourses(data);
   };
@@ -58,8 +55,10 @@ export default function Academy() {
                 <img
                   src={course.image}
                   alt={course.title}
-                  className="mb-5 h-44 w-full rounded-2xl object-cover"                />
+                  className="mb-5 h-44 w-full rounded-2xl object-cover"
+                />
               )}
+
               <h2 className="font-serif text-2xl text-[#E75480]">
                 {course.title}
               </h2>
@@ -69,21 +68,27 @@ export default function Academy() {
               </p>
 
               <div className="mt-4 space-y-1 text-sm text-[#8A6F78]">
-                <p><strong>Duration:</strong> {course.duration}</p>
-                <p><strong>Fee:</strong> {course.fee}</p>
-                <p><strong>Certificate:</strong> {course.certificate}</p>
+                <p>
+                  <strong>Duration:</strong> {course.duration}
+                </p>
+                <p>
+                  <strong>Fee:</strong> {course.fee}
+                </p>
+                <p>
+                  <strong>Certificate:</strong> {course.certificate}
+                </p>
               </div>
 
-            <button
-              onClick={() => {
-                localStorage.setItem("bookingType", "course");
-                localStorage.setItem("selectedCourse", course.title);
-                navigate("/booking");
-              }}
-              className="mt-6 w-full rounded-full bg-[#E75480] px-6 py-3 text-xs uppercase tracking-[2px] text-white"
-            >
-              Enroll Now
-            </button>
+              <button
+                onClick={() => {
+                  localStorage.setItem("bookingType", "course");
+                  localStorage.setItem("selectedCourse", course.title);
+                  navigate("/booking");
+                }}
+                className="mt-6 w-full rounded-full bg-[#E75480] px-6 py-3 text-xs uppercase tracking-[2px] text-white"
+              >
+                Enroll Now
+              </button>
             </div>
           ))}
 

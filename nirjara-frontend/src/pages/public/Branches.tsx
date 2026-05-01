@@ -1,11 +1,10 @@
 import BranchCard from "../../components/BranchCard";
 import { branches } from "../../data/branches";
+import { useNavigate } from "react-router-dom";
 
-type BranchesProps = {
-  setCurrentPage: (page: string) => void;
-};
+export default function Branches() {
+  const navigate = useNavigate();
 
-export default function Branches({ setCurrentPage }: BranchesProps) {
   return (
     <main className="min-h-screen bg-[#FFF5F8] px-6 pb-24 pt-36 text-[#3A2A2F] md:px-12">
       <section className="mx-auto max-w-6xl">
@@ -30,7 +29,7 @@ export default function Branches({ setCurrentPage }: BranchesProps) {
 
         <div className="mt-16 text-center">
           <button
-            onClick={() => setCurrentPage("Booking")}
+            onClick={() => navigate("/booking")}
             className="rounded-full bg-[#E75480] px-10 py-4 text-xs font-medium uppercase tracking-[2px] text-white shadow-lg transition hover:bg-[#C93D68]"
           >
             Book at a Branch
