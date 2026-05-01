@@ -5,7 +5,8 @@ type Course = {
   title: string;
   duration: string;
   description: string;
-  price: string;
+  fee: string;
+  certificate: string;
   image?: string;
 };
 
@@ -13,7 +14,8 @@ const emptyCourse: Course = {
   title: "",
   duration: "",
   description: "",
-  price: "",
+  fee: "",
+  certificate: "",
   image: "",
 };
 
@@ -26,6 +28,7 @@ export default function CoursesAdmin() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [form, setForm] = useState<Course>(emptyCourse);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const fetchCourses = async () => {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/courses`);
@@ -46,23 +49,40 @@ export default function CoursesAdmin() {
     const formData = new FormData();
     formData.append("image", file);
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
-      body: formData,
-    });
+    try {
+      setUploading(true);
 
-    const data = await res.json();
-    setForm({ ...form, image: data.imageUrl });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Image upload failed");
+        return;
+      }
+
+      setForm((prev) => ({ ...prev, image: data.imageUrl }));
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.title || !form.price || !form.duration) {
-      alert("Please fill title, price, and duration.");
+    if (!form.title || !form.duration || !form.fee || !form.certificate) {
+      alert("Please fill title, duration, fee, and certificate.");
+      return;
+    }
+
+    if (!form.image) {
+      alert("Please upload an image.");
       return;
     }
 
@@ -81,11 +101,19 @@ export default function CoursesAdmin() {
     resetForm();
   };
 
-  const handleEdit = (course: Course) => {
-    setForm(course);
-    setEditingId(course._id || null);
-    window.scrollTo(0, 0);
-  };
+const handleEdit = (course: Course) => {
+  setForm({
+    title: course.title || "",
+    duration: course.duration || "",
+    description: course.description || "",
+    fee: course.fee || "",
+    certificate: course.certificate || "",
+    image: course.image || "",
+  });
+
+  setEditingId(course._id || null);
+  window.scrollTo(0, 0);
+};
 
   const handleDelete = async (id?: string) => {
     if (!id) return;
@@ -111,7 +139,6 @@ export default function CoursesAdmin() {
         Manage academy courses.
       </p>
 
-      {/* Form */}
       <form
         onSubmit={handleSubmit}
         className="mt-8 rounded-3xl bg-white p-4 shadow-sm md:p-6"
@@ -129,28 +156,37 @@ export default function CoursesAdmin() {
           />
 
           <input
-            placeholder="Duration (e.g. 3 Months)"
+            placeholder="Duration e.g. 3 Months"
             value={form.duration}
             onChange={(e) => setForm({ ...form, duration: e.target.value })}
             className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:text-base"
           />
 
           <input
-            placeholder="Price"
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
+            placeholder="Fee e.g. Rs. 25,000"
+            value={form.fee}
+            onChange={(e) => setForm({ ...form, fee: e.target.value })}
+            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:text-base"
+          />
+
+          <input
+            placeholder="Certificate e.g. Included"
+            value={form.certificate}
+            onChange={(e) =>
+              setForm({ ...form, certificate: e.target.value })
+            }
             className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:text-base"
           />
 
           <input
             type="file"
-            accept="image/*"
+            accept="image/png, image/jpeg, image/jpg, image/webp"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
               handleImageUpload(file);
             }}
-            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none"
+            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:col-span-2"
           />
 
           <textarea
@@ -164,6 +200,10 @@ export default function CoursesAdmin() {
           />
         </div>
 
+        {uploading && (
+          <p className="mt-4 text-sm text-[#8A6F78]">Uploading image...</p>
+        )}
+
         {form.image && (
           <img
             src={form.image}
@@ -173,8 +213,15 @@ export default function CoursesAdmin() {
         )}
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <button className="rounded-full bg-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-white">
-            {editingId ? "Update Course" : "Add Course"}
+          <button
+            disabled={uploading}
+            className="rounded-full bg-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-white disabled:opacity-60"
+          >
+            {uploading
+              ? "Uploading..."
+              : editingId
+              ? "Update Course"
+              : "Add Course"}
           </button>
 
           {editingId && (
@@ -189,7 +236,6 @@ export default function CoursesAdmin() {
         </div>
       </form>
 
-      {/* Course Cards */}
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {courses.map((course) => (
           <div
@@ -210,7 +256,7 @@ export default function CoursesAdmin() {
               </h2>
 
               <p className="mt-2 text-sm text-[#8A6F78]">
-                {course.duration}
+                <strong>Duration:</strong> {course.duration}
               </p>
 
               <p className="mt-2 break-words text-sm text-[#8A6F78]">
@@ -218,7 +264,11 @@ export default function CoursesAdmin() {
               </p>
 
               <p className="mt-3 font-medium text-[#E75480]">
-                {course.price}
+                {course.fee}
+              </p>
+
+              <p className="mt-1 text-sm text-[#8A6F78]">
+                <strong>Certificate:</strong> {course.certificate}
               </p>
 
               <div className="mt-5 flex flex-wrap gap-3">

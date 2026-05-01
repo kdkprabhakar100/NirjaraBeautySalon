@@ -17,9 +17,24 @@ const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
 });
 
+const getImageUrl = (image?: string) => {
+  if (!image) return "";
+
+  if (image.startsWith("http://localhost:5000")) {
+    return image.replace("http://localhost:5000", import.meta.env.VITE_API_URL);
+  }
+
+  if (image.startsWith("/uploads")) {
+    return `${import.meta.env.VITE_API_URL}${image}`;
+  }
+
+  return image;
+};
+
 export default function GalleryAdmin() {
   const [items, setItems] = useState<ImageItem[]>([]);
   const [form, setForm] = useState<ImageItem>(emptyItem);
+  const [uploading, setUploading] = useState(false);
 
   const fetchItems = async () => {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/gallery`);
@@ -35,14 +50,28 @@ export default function GalleryAdmin() {
     const formData = new FormData();
     formData.append("image", file);
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: formData,
-    });
+    try {
+      setUploading(true);
 
-    const data = await res.json();
-    setForm({ ...form, image: data.imageUrl });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Image upload failed");
+        return;
+      }
+
+      setForm((prev) => ({ ...prev, image: data.imageUrl }));
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,7 +117,6 @@ export default function GalleryAdmin() {
         Upload and manage gallery images.
       </p>
 
-      {/* Upload Form */}
       <form
         onSubmit={handleSubmit}
         className="mt-8 rounded-3xl bg-white p-4 shadow-sm md:p-6"
@@ -114,7 +142,7 @@ export default function GalleryAdmin() {
 
           <input
             type="file"
-            accept="image/*"
+            accept="image/png, image/jpeg, image/jpg, image/webp"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
@@ -124,20 +152,26 @@ export default function GalleryAdmin() {
           />
         </div>
 
+        {uploading && (
+          <p className="mt-4 text-sm text-[#8A6F78]">Uploading image...</p>
+        )}
+
         {form.image && (
           <img
-            src={form.image}
+            src={getImageUrl(form.image)}
             alt="Preview"
             className="mt-5 h-44 w-full rounded-2xl object-cover md:max-w-md"
           />
         )}
 
-        <button className="mt-6 rounded-full bg-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-white">
-          Upload Image
+        <button
+          disabled={uploading}
+          className="mt-6 rounded-full bg-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-white disabled:opacity-60"
+        >
+          {uploading ? "Uploading..." : "Upload Image"}
         </button>
       </form>
 
-      {/* Gallery Grid */}
       <div className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {items.map((item) => (
           <div
@@ -145,7 +179,7 @@ export default function GalleryAdmin() {
             className="overflow-hidden rounded-3xl bg-white shadow-sm"
           >
             <img
-              src={item.image}
+              src={getImageUrl(item.image)}
               alt={item.title}
               className="h-40 w-full object-cover"
             />
@@ -155,9 +189,7 @@ export default function GalleryAdmin() {
                 {item.title || "Untitled"}
               </h3>
 
-              <p className="mt-1 text-xs text-[#8A6F78]">
-                {item.category}
-              </p>
+              <p className="mt-1 text-xs text-[#8A6F78]">{item.category}</p>
 
               <button
                 onClick={() => handleDelete(item._id)}

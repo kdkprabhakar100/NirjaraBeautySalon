@@ -50,14 +50,17 @@ export default function BlogAdmin() {
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
-      body: formData,
+      body: formData, // ❗ NO headers
     });
 
     const data = await res.json();
-    setForm({ ...form, image: data.imageUrl });
+
+    if (!res.ok) {
+      alert("Upload failed");
+      return null;
+    }
+
+    return data.imageUrl; // Cloudinary URL
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -149,7 +152,11 @@ export default function BlogAdmin() {
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
-              handleImageUpload(file);
+              handleImageUpload(file).then((imageUrl) => {
+                if (imageUrl) {
+                  setForm({ ...form, image: imageUrl });
+                }
+              });
             }}
             className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none"
           />

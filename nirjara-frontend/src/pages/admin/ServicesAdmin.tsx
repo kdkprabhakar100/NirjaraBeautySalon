@@ -12,14 +12,6 @@ type Service = {
 
 const categories = ["Hair", "Skin", "Bridal", "Nails", "Spa", "Academy", "Other"];
 
-const imageOptions = [
-  "/images/hair.png",
-  "/images/facial.png",
-  "/images/bridal.png",
-  "/images/salon.png",
-  "/images/salon1.png",
-];
-
 const emptyForm: Service = {
   icon: "✦",
   title: "",
@@ -39,6 +31,7 @@ export default function ServicesAdmin() {
   const [form, setForm] = useState<Service>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [customCategory, setCustomCategory] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const fetchServices = async () => {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/services`);
@@ -56,6 +49,34 @@ export default function ServicesAdmin() {
     setCustomCategory("");
   };
 
+  const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      setUploading(true);
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Image upload failed");
+        return;
+      }
+
+      setForm((prev) => ({ ...prev, image: data.imageUrl }));
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -64,12 +85,22 @@ export default function ServicesAdmin() {
       category: form.category === "Other" ? customCategory : form.category,
     };
 
-    if (!finalService.title || !finalService.price || !finalService.category) {
-      alert("Please fill title, price, and category.");
+    if (
+      !finalService.title ||
+      !finalService.price ||
+      !finalService.category ||
+      !finalService.description
+    ) {
+      alert("Please fill title, price, category, and description.");
       return;
     }
 
-    await fetch(
+    if (!finalService.image) {
+      alert("Please upload an image.");
+      return;
+    }
+
+    const res = await fetch(
       editingId
         ? `${import.meta.env.VITE_API_URL}/api/services/${editingId}`
         : `${import.meta.env.VITE_API_URL}/api/services`,
@@ -79,6 +110,13 @@ export default function ServicesAdmin() {
         body: JSON.stringify(finalService),
       }
     );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Service save failed");
+      return;
+    }
 
     await fetchServices();
     resetForm();
@@ -90,14 +128,12 @@ export default function ServicesAdmin() {
       title: service.title || "",
       description: service.description || "",
       price: service.price || "",
-      category: categories.includes(service.category)
-        ? service.category
-        : "Other",
+      category: categories.includes(service.category) ? service.category : "Other",
       image: service.image || "",
     });
 
     if (!categories.includes(service.category)) {
-      setCustomCategory(service.category);
+      setCustomCategory(service.category || "");
     }
 
     setEditingId(service._id || null);
@@ -116,22 +152,6 @@ export default function ServicesAdmin() {
     });
 
     await fetchServices();
-  };
-
-  const handleImageUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-    setForm({ ...form, image: data.imageUrl });
   };
 
   return (
@@ -179,19 +199,6 @@ export default function ServicesAdmin() {
             ))}
           </select>
 
-          <select
-            value={form.image}
-            onChange={(e) => setForm({ ...form, image: e.target.value })}
-            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:text-base"
-          >
-            <option value="">Select default image</option>
-            {imageOptions.map((image) => (
-              <option key={image} value={image}>
-                {image}
-              </option>
-            ))}
-          </select>
-
           <input
             type="file"
             accept="image/png, image/jpeg, image/jpg, image/webp"
@@ -200,7 +207,7 @@ export default function ServicesAdmin() {
               if (!file) return;
               handleImageUpload(file);
             }}
-            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none md:col-span-2"
+            className="w-full rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-4 py-3 text-sm outline-none"
           />
 
           {form.category === "Other" && (
@@ -221,6 +228,10 @@ export default function ServicesAdmin() {
           />
         </div>
 
+        {uploading && (
+          <p className="mt-4 text-sm text-[#8A6F78]">Uploading image...</p>
+        )}
+
         {form.image && (
           <div className="mt-5">
             <p className="mb-2 text-sm text-[#8A6F78]">Image Preview</p>
@@ -233,8 +244,15 @@ export default function ServicesAdmin() {
         )}
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <button className="rounded-full bg-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-white">
-            {editingId ? "Update Service" : "Add Service"}
+          <button
+            disabled={uploading}
+            className="rounded-full bg-[#E75480] px-8 py-3 text-xs uppercase tracking-[2px] text-white disabled:opacity-60"
+          >
+            {uploading
+              ? "Uploading..."
+              : editingId
+              ? "Update Service"
+              : "Add Service"}
           </button>
 
           {editingId && (
