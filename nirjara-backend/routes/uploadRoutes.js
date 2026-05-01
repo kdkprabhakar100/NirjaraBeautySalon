@@ -29,7 +29,7 @@ const upload = multer({
 
 router.post("/", upload.single("image"), (req, res) => {
   res.json({
-    imageUrl: `http://localhost:5000/uploads/${req.file.filename}`,
+    imageUrl: `${process.env.BASE_URL}/uploads/${req.file.filename}`,
   });
 });
 
