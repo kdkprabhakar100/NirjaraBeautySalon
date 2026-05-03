@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const serviceSchema = new mongoose.Schema(
   {
+      key: { type: String, default: "" },
     icon: { type: String, default: "✦" },
     title: { type: String, required: true },
     description: { type: String, required: true },

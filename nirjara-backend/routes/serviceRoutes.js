@@ -25,4 +25,5 @@ router.delete("/:id", protect, async (req, res) => {
   await Service.findByIdAndDelete(req.params.id);
   res.json({ message: "Service deleted" });
 });
+
 module.exports = router;

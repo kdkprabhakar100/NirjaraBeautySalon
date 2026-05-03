@@ -1,5 +1,6 @@
 const express = require("express");
 const Course = require("../models/Course");
+const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -11,12 +12,31 @@ router.get("/", async (req, res) => {
 
 // CREATE
 router.post("/", async (req, res) => {
-  const course = await Course.create(req.body);
-  res.status(201).json(course);
-});
+  try {
+    const { title, duration, price, description, image } = req.body;
 
+    if (!image) {
+      return res.status(400).json({ message: "Image required" });
+    }
+
+    const course = new Course({
+      title,
+      duration,
+      price,
+      description,
+      image, // ✅ THIS MUST BE CLOUDINARY URL
+    });
+
+    await course.save();
+
+    res.status(201).json(course);
+  } catch (error) {
+    console.error(error); // 👈 CHECK THIS IN RENDER LOGS
+    res.status(500).json({ message: "Server error" });
+  }
+});
 // UPDATE
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect, async (req, res) => {
   const course = await Course.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -26,7 +46,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protect, async (req, res) => {
   await Course.findByIdAndDelete(req.params.id);
   res.json({ message: "Course deleted" });
 });

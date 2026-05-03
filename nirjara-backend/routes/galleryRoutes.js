@@ -1,5 +1,6 @@
 const express = require("express");
 const Gallery = require("../models/Gallery");
+const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -10,13 +11,13 @@ router.get("/", async (req, res) => {
 });
 
 // CREATE
-router.post("/", async (req, res) => {
+router.post("/", protect, async (req, res) => {
   const item = await Gallery.create(req.body);
   res.status(201).json(item);
 });
 
 // UPDATE
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect, async (req, res) => {
   const item = await Gallery.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
@@ -24,7 +25,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protect, async (req, res) => {
   await Gallery.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
 });
