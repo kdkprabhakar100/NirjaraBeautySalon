@@ -1,18 +1,32 @@
-export const branches = [
+export type Branch = {
+  number: string;
+  name: string;
+  address: string;
+  hours: string;
+  phone: string;
+  tag: string;
+  mapUrl: string;
+};
+
+export const branches: Branch[] = [
   {
     number: "01",
-    name: "Teku Branch",
-    address: "Thamel Marg, Kathmandu",
-    hours: "Sun–Fri: 10am–7pm | Sat: 9am–8pm",
-    phone: "+977 01-4XXXXXX",
-    tag: "Flagship",
+    name: "Chabahil Branch",
+    address: "Chunne Bhairab Marg, Chabahil, Kathmandu 44600",
+    hours: "8:30 AM – 10:00 PM · Open Daily",
+    phone: "+977 985-1097472",
+    tag: "Main Branch · Est. 2013",
+    mapUrl:
+      "https://maps.google.com/?cid=5294540498943371996",
   },
   {
     number: "02",
-    name: "Chabel Branch",
-    address: "Chabel Road, Kathmandu",
-    hours: "Sun–Fri: 10am–7pm | Sat: 9am–8pm",
-    phone: "+977 01-4XXXXXX",
-    tag: "Open Now",
+    name: "Rabibhawan Branch",
+    address: "Rabibhawan, Kalanki–Kalimati Road, Kathmandu",
+    hours: "8:30 AM – 10:00 PM · Open Daily",
+    phone: "+977 980-4720733",
+    tag: "New Branch · Kalanki",
+    mapUrl:
+      "https://maps.google.com/?q=Nirjara+Beauty+Salon+Rabibhawan+Kalanki+Kathmandu",
   },
 ];
