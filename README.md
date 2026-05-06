@@ -6,3 +6,5 @@ Client: Mr. Kumar Kunwar, Nirjara Beauty Salon & Academy
 2. Admin dashboard (for owner)
 3. Booking system (main feature)
 4. SEO + fast performance
+
+Developed by prabhakar khadka
