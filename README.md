@@ -8,3 +8,4 @@ Client: Mr. Kumar Kunwar, Nirjara Beauty Salon & Academy
 4. SEO + fast performance
 
 Developed by prabhakar khadka
+for nirjara beauty salon
