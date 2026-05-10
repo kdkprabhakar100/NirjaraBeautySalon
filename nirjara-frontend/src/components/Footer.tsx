@@ -50,7 +50,8 @@ export default function Footer() {
           <div className="mt-5 space-y-2 text-sm leading-7 text-[#8A6F78]">
             <p>Teku, Kathmandu</p>
             <p>Chabahil, Kathmandu</p>
-            <p>+977 98XXXXXXXX</p>
+            <p>+977 9851097472</p>
+            <p>+977 9849193532</p>
             <p>Developed by Prabhakar Khadka</p>
 
             <Link
