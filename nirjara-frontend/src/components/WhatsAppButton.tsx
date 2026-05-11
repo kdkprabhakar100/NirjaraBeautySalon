@@ -1,5 +1,5 @@
 export default function WhatsAppButton() {
-  const phoneNumber = "97798XXXXXXXX"; // replace with Nirjara WhatsApp number
+  const phoneNumber = "9851097472"; // replace with Nirjara WhatsApp number
 
   const message = encodeURIComponent(
     "Hello Nirjara Beauty, I want to ask about booking/services."
