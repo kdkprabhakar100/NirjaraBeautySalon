@@ -13,6 +13,11 @@ const courseRoutes = require("./routes/courseRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const blogRoutes = require("./routes/blogRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const productRoutes = require("./routes/productRoutes");
+
+console.log("PRODUCT ROUTES IMPORTED");
+console.log(productRoutes);
 
 // Auth routes
 const authRoutes = require("./routes/authRoutes");
@@ -39,6 +44,9 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/blogs", blogRoutes);
+app.use("/api/orders", orderRoutes);
+console.log(productRoutes);
+app.use("/api/products", productRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
