@@ -23,6 +23,10 @@ import CoursesAdmin from "./pages/admin/CoursesAdmin";
 import ContactMessagesAdmin from "./pages/admin/ContactMessagesAdmin";
 import BlogAdmin from "./pages/admin/BlogAdmin";
 
+//productpages
+import Products from "./pages/product/Products";
+//import ProductDetails from "./pages/product/ProductDetails";  
+
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
@@ -185,16 +189,24 @@ export default function App() {
           }
         />
 
+          <Route
+            path="/products"
+            element={
+              <PublicLayout>
+                <Products />
+              </PublicLayout>
+            }
+          />
         <Route
-          path="/admin/messages"
+          path="/admin/products"
           element={
             <ProtectedAdmin>
               <AdminLayout>
-                <ContactMessagesAdmin />
+                <Products />
               </AdminLayout>
             </ProtectedAdmin>
           }
-        />
+        />  
 
         <Route
           path="/admin/blogs"

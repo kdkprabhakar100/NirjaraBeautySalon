@@ -1,7 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
-console.log("PRODUCT ROUTES FILE EXECUTED");
+// console.log("PRODUCT ROUTES FILE EXECUTED");
 const {
   getProducts,
   getProduct,
