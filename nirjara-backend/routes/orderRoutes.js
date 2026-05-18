@@ -8,10 +8,13 @@ const {
   updateOrderStatus,
 } = require("../controllers/orderController");
 
+// CREATE ORDER
 router.post("/", createOrder);
 
+// GET ORDERS
 router.get("/", getOrders);
 
+// UPDATE STATUS
 router.put("/:id", updateOrderStatus);
 
 module.exports = router;
