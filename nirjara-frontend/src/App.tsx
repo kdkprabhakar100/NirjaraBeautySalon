@@ -1,40 +1,60 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// PUBLIC LAYOUT
-import PublicLayout from "./pages/public/PublicLayout";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import WhatsAppButton from "./components/WhatsAppButton";
 
-// PUBLIC PAGES
-import Home from "./pages/Home";
-import Services from "./pages/Services";
-import Gallery from "./pages/Gallery";
-import Branches from "./pages/Branches";
-import Academy from "./pages/Academy";
-import Blog from "./pages/Blog";
-import Contact from "./pages/Contact";
+import Home from "./pages/public/Home";
+import Services from "./pages/public/Services";
+import Booking from "./pages/public/Booking";
+import Branches from "./pages/public/Branches";
+import Academy from "./pages/public/Academy";
+import Blog from "./pages/public/Blog";
+import Contact from "./pages/public/Contact";
+import Gallery from "./components/Gallery";
 
-// PRODUCT PAGES
-import Products from "./pages/product/Products";
-import ProductDetails from "./pages/product/ProductDetails";
-import Cart from "./pages/product/Cart";
-import Checkout from "./pages/product/Checkout";
-
-// ADMIN
+import Login from "./pages/admin/Login";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
-import AdminServices from "./pages/admin/AdminServices";
-import AdminGallery from "./pages/admin/AdminGallery";
-import AdminCourses from "./pages/admin/AdminCourses";
-import AdminBlogs from "./pages/admin/AdminBlogs";
-import AdminProducts from "./pages/admin/AdminProducts";
+import BookingsAdmin from "./pages/admin/BookingsAdmin";
+import ServicesAdmin from "./pages/admin/ServicesAdmin";
+import GalleryAdmin from "./pages/admin/GalleryAdmin";
+import CoursesAdmin from "./pages/admin/CoursesAdmin";
+import ContactMessagesAdmin from "./pages/admin/ContactMessagesAdmin";
+import BlogAdmin from "./pages/admin/BlogAdmin";
+import AdminOrders from "./pages/admin/AdminOrders";
 
-// AUTH
-import Login from "./pages/admin/Login";
+//productpages
+import Products from "./pages/product/Products";
+import ProductDetails from "./pages/product/ProductDetails"; 
+import Cart from "./pages/product/Cart";
+import Checkout from "./pages/product/Checkout";   
 
-function App() {
+function PublicLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+      <WhatsAppButton />
+    </>
+  );
+}
+
+function ProtectedAdmin({ children }: { children: React.ReactNode }) {
+  const token = localStorage.getItem("adminToken");
+
+  if (!token) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* PUBLIC ROUTES */}
         <Route
           path="/"
@@ -59,6 +79,15 @@ function App() {
           element={
             <PublicLayout>
               <Gallery />
+            </PublicLayout>
+          }
+        />
+
+        <Route
+          path="/booking"
+          element={
+            <PublicLayout>
+              <Booking />
             </PublicLayout>
           }
         />
@@ -99,104 +128,135 @@ function App() {
           }
         />
 
-        {/* PRODUCTS */}
-        <Route
-          path="/products"
-          element={
-            <PublicLayout>
-              <Products />
-            </PublicLayout>
-          }
-        />
-
-        <Route
-          path="/products/:id"
-          element={
-            <PublicLayout>
-              <ProductDetails />
-            </PublicLayout>
-          }
-        />
-
-        <Route
-          path="/cart"
-          element={
-            <PublicLayout>
-              <Cart />
-            </PublicLayout>
-          }
-        />
-
-        <Route
-          path="/checkout"
-          element={
-            <PublicLayout>
-              <Checkout />
-            </PublicLayout>
-          }
-        />
-
         {/* ADMIN LOGIN */}
         <Route path="/admin/login" element={<Login />} />
 
-        {/* ADMIN DASHBOARD */}
+        {/* ADMIN ROUTES */}
         <Route
           path="/admin"
+          element={<Navigate to="/admin/dashboard" replace />}
+        />
+
+        <Route
+          path="/admin/dashboard"
           element={
-            <AdminLayout>
-              <Dashboard />
-            </AdminLayout>
+            <ProtectedAdmin>
+              <AdminLayout>
+                <Dashboard />
+              </AdminLayout>
+            </ProtectedAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/bookings"
+          element={
+            <ProtectedAdmin>
+              <AdminLayout>
+                <BookingsAdmin />
+              </AdminLayout>
+            </ProtectedAdmin>
           }
         />
 
         <Route
           path="/admin/services"
           element={
-            <AdminLayout>
-              <AdminServices />
-            </AdminLayout>
+            <ProtectedAdmin>
+              <AdminLayout>
+                <ServicesAdmin />
+              </AdminLayout>
+            </ProtectedAdmin>
           }
         />
 
         <Route
           path="/admin/gallery"
           element={
-            <AdminLayout>
-              <AdminGallery />
-            </AdminLayout>
+            <ProtectedAdmin>
+              <AdminLayout>
+                <GalleryAdmin />
+              </AdminLayout>
+            </ProtectedAdmin>
           }
         />
 
         <Route
           path="/admin/courses"
           element={
-            <AdminLayout>
-              <AdminCourses />
-            </AdminLayout>
+            <ProtectedAdmin>
+              <AdminLayout>
+                <CoursesAdmin />
+              </AdminLayout>
+            </ProtectedAdmin>
           }
         />
+
+          <Route
+            path="/products"
+            element={
+              <PublicLayout>
+                <Products />
+              </PublicLayout>
+            }
+          />
+          <Route
+              path="/admin/orders"
+              element={
+                <AdminLayout>
+                  <AdminOrders />
+                </AdminLayout>
+              }
+            />
+
+          <Route
+            path="/products/:id"
+            element={
+              <PublicLayout>
+                <ProductDetails />
+              </PublicLayout>
+            }
+          />
+
+          <Route
+            path="/cart"
+            element={
+              <PublicLayout>
+                <Cart />
+              </PublicLayout>
+            }
+          />
+
+          <Route
+            path="/checkout"
+            element={
+              <PublicLayout>
+                <Checkout />
+              </PublicLayout>
+            }
+          />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedAdmin>
+              <AdminLayout>
+                <Products />
+              </AdminLayout>
+            </ProtectedAdmin>
+          }
+        />  
 
         <Route
           path="/admin/blogs"
           element={
-            <AdminLayout>
-              <AdminBlogs />
-            </AdminLayout>
+            <ProtectedAdmin>
+              <AdminLayout>
+                <BlogAdmin />
+              </AdminLayout>
+            </ProtectedAdmin>
           }
         />
-
-        <Route
-          path="/admin/products"
-          element={
-            <AdminLayout>
-              <AdminProducts />
-            </AdminLayout>
-          }
-        />
-
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;
