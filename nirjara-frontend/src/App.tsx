@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import "./App.css";
+
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -6,13 +12,14 @@ import WhatsAppButton from "./components/WhatsAppButton";
 
 import Home from "./pages/public/Home";
 import Services from "./pages/public/Services";
-import Booking from "./pages/public/Booking";
 import Branches from "./pages/public/Branches";
 import Academy from "./pages/public/Academy";
 import Blog from "./pages/public/Blog";
 import Contact from "./pages/public/Contact";
 import Gallery from "./components/Gallery";
+import Booking from "./pages/public/Booking";
 
+// ADMIN
 import Login from "./pages/admin/Login";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
@@ -22,40 +29,44 @@ import GalleryAdmin from "./pages/admin/GalleryAdmin";
 import CoursesAdmin from "./pages/admin/CoursesAdmin";
 import ContactMessagesAdmin from "./pages/admin/ContactMessagesAdmin";
 import BlogAdmin from "./pages/admin/BlogAdmin";
-import AdminOrders from "./pages/admin/AdminOrders";
 
-//productpages
+// PRODUCTS
 import Products from "./pages/product/Products";
-import ProductDetails from "./pages/product/ProductDetails"; 
+import ProductDetails from "./pages/product/ProductDetails";
 import Cart from "./pages/product/Cart";
-import Checkout from "./pages/product/Checkout";   
+import Checkout from "./pages/product/Checkout";
 
-function PublicLayout({ children }: { children: React.ReactNode }) {
+// ADMIN ECOMMERCE
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminProducts from "./pages/admin/AdminProducts";
+
+function PublicLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <Navbar />
-      {children}
+
+      {/* FIXED NAVBAR SPACING */}
+      <main >
+        {children}
+      </main>
+
       <Footer />
+
       <WhatsAppButton />
     </>
   );
-}
-
-function ProtectedAdmin({ children }: { children: React.ReactNode }) {
-  const token = localStorage.getItem("adminToken");
-
-  if (!token) {
-    return <Navigate to="/admin/login" replace />;
-  }
-
-  return <>{children}</>;
 }
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* PUBLIC ROUTES */}
+
+        {/* HOME */}
         <Route
           path="/"
           element={
@@ -65,6 +76,7 @@ export default function App() {
           }
         />
 
+        {/* SERVICES */}
         <Route
           path="/services"
           element={
@@ -74,6 +86,7 @@ export default function App() {
           }
         />
 
+        {/* GALLERY */}
         <Route
           path="/gallery"
           element={
@@ -83,15 +96,7 @@ export default function App() {
           }
         />
 
-        <Route
-          path="/booking"
-          element={
-            <PublicLayout>
-              <Booking />
-            </PublicLayout>
-          }
-        />
-
+        {/* BRANCHES */}
         <Route
           path="/branches"
           element={
@@ -101,6 +106,7 @@ export default function App() {
           }
         />
 
+        {/* ACADEMY */}
         <Route
           path="/academy"
           element={
@@ -110,6 +116,7 @@ export default function App() {
           }
         />
 
+        {/* BLOG */}
         <Route
           path="/blog"
           element={
@@ -119,6 +126,7 @@ export default function App() {
           }
         />
 
+        {/* CONTACT */}
         <Route
           path="/contact"
           element={
@@ -128,134 +136,152 @@ export default function App() {
           }
         />
 
-        {/* ADMIN LOGIN */}
-        <Route path="/admin/login" element={<Login />} />
-
-        {/* ADMIN ROUTES */}
+        {/* BOOKING */}
         <Route
-          path="/admin"
-          element={<Navigate to="/admin/dashboard" replace />}
+          path="/booking"
+          element={
+            <PublicLayout>
+              <Booking />
+            </PublicLayout>
+          }
         />
 
+        {/* PRODUCTS */}
+        <Route
+          path="/products"
+          element={
+            <PublicLayout>
+              <Products />
+            </PublicLayout>
+          }
+        />
+
+        {/* PRODUCT DETAILS */}
+        <Route
+          path="/products/:id"
+          element={
+            <PublicLayout>
+              <ProductDetails />
+            </PublicLayout>
+          }
+        />
+
+        {/* CART */}
+        <Route
+          path="/cart"
+          element={
+            <PublicLayout>
+              <Cart />
+            </PublicLayout>
+          }
+        />
+
+        {/* CHECKOUT */}
+        <Route
+          path="/checkout"
+          element={
+            <PublicLayout>
+              <Checkout />
+            </PublicLayout>
+          }
+        />
+
+        {/* ADMIN LOGIN */}
+        <Route
+          path="/admin/login"
+          element={<Login />}
+        />
+
+        {/* ADMIN DASHBOARD */}
         <Route
           path="/admin/dashboard"
           element={
-            <ProtectedAdmin>
-              <AdminLayout>
-                <Dashboard />
-              </AdminLayout>
-            </ProtectedAdmin>
+            <AdminLayout>
+              <Dashboard />
+            </AdminLayout>
           }
         />
 
+        {/* ADMIN BOOKINGS */}
         <Route
           path="/admin/bookings"
           element={
-            <ProtectedAdmin>
-              <AdminLayout>
-                <BookingsAdmin />
-              </AdminLayout>
-            </ProtectedAdmin>
+            <AdminLayout>
+              <BookingsAdmin />
+            </AdminLayout>
           }
         />
 
+        {/* ADMIN SERVICES */}
         <Route
           path="/admin/services"
           element={
-            <ProtectedAdmin>
-              <AdminLayout>
-                <ServicesAdmin />
-              </AdminLayout>
-            </ProtectedAdmin>
+            <AdminLayout>
+              <ServicesAdmin />
+            </AdminLayout>
           }
         />
 
+        {/* ADMIN GALLERY */}
         <Route
           path="/admin/gallery"
           element={
-            <ProtectedAdmin>
-              <AdminLayout>
-                <GalleryAdmin />
-              </AdminLayout>
-            </ProtectedAdmin>
+            <AdminLayout>
+              <GalleryAdmin />
+            </AdminLayout>
           }
         />
 
+        {/* ADMIN COURSES */}
         <Route
           path="/admin/courses"
           element={
-            <ProtectedAdmin>
-              <AdminLayout>
-                <CoursesAdmin />
-              </AdminLayout>
-            </ProtectedAdmin>
+            <AdminLayout>
+              <CoursesAdmin />
+            </AdminLayout>
           }
         />
 
-          <Route
-            path="/products"
-            element={
-              <PublicLayout>
-                <Products />
-              </PublicLayout>
-            }
-          />
-          <Route
-              path="/admin/orders"
-              element={
-                <AdminLayout>
-                  <AdminOrders />
-                </AdminLayout>
-              }
-            />
-
-          <Route
-            path="/products/:id"
-            element={
-              <PublicLayout>
-                <ProductDetails />
-              </PublicLayout>
-            }
-          />
-
-          <Route
-            path="/cart"
-            element={
-              <PublicLayout>
-                <Cart />
-              </PublicLayout>
-            }
-          />
-
-          <Route
-            path="/checkout"
-            element={
-              <PublicLayout>
-                <Checkout />
-              </PublicLayout>
-            }
-          />
+        {/* ADMIN MESSAGES */}
         <Route
-          path="/admin/products"
+          path="/admin/messages"
           element={
-            <ProtectedAdmin>
-              <AdminLayout>
-                <Products />
-              </AdminLayout>
-            </ProtectedAdmin>
+            <AdminLayout>
+              <ContactMessagesAdmin />
+            </AdminLayout>
           }
-        />  
+        />
 
+        {/* ADMIN BLOGS */}
         <Route
           path="/admin/blogs"
           element={
-            <ProtectedAdmin>
-              <AdminLayout>
-                <BlogAdmin />
-              </AdminLayout>
-            </ProtectedAdmin>
+            <AdminLayout>
+              <BlogAdmin />
+            </AdminLayout>
           }
         />
+
+        {/* ADMIN ORDERS */}
+        <Route
+          path="/admin/orders"
+          element={
+            <AdminLayout>
+              <AdminOrders />
+            </AdminLayout>
+          }
+        />
+
+        {/* ADMIN PRODUCTS */}
+        <Route
+          path="/admin/products"
+          element={
+            <AdminLayout>
+              <AdminProducts />
+            </AdminLayout>
+          }
+        />
+        
       </Routes>
     </BrowserRouter>
   );

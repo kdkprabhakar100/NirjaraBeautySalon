@@ -1,3 +1,4 @@
+import { label } from "framer-motion/client";
 import { NavLink, useNavigate } from "react-router-dom";
 
 type AdminLayoutProps = {
@@ -12,6 +13,8 @@ const adminLinks = [
   { label: "Courses", path: "/admin/courses" },
   { label: "Messages", path: "/admin/messages" },
   { label: "Blogs", path: "/admin/blogs" },
+  { label: "Orders", path: "/admin/orders" },
+  { label: "Products", path: "/admin/products" },
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
