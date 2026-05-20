@@ -3,18 +3,22 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  createOrder,
   getOrders,
+  createOrder,
   updateOrderStatus,
+  deleteOrder,
 } = require("../controllers/orderController");
+
+// GET ALL ORDERS
+router.get("/", getOrders);
 
 // CREATE ORDER
 router.post("/", createOrder);
 
-// GET ORDERS
-router.get("/", getOrders);
-
-// UPDATE STATUS
+// UPDATE ORDER STATUS
 router.put("/:id", updateOrderStatus);
+
+// DELETE ORDER
+router.delete("/:id", deleteOrder);
 
 module.exports = router;
