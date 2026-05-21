@@ -1,12 +1,80 @@
-## Nirjara Beauty Salon
-Client: Mr. Kumar Kunwar, Nirjara Beauty Salon & Academy 
+# Nirjara Beauty Salon
 
-# what we are working for
-1. Public website (for customers)
-2. Admin dashboard (for owner)
-3. Booking system (main feature)
-4. SEO + fast performance
-5. e-commerce features
+Nirjara Beauty Salon is a full-stack beauty salon and academy website built with React, Node.js, Express, MongoDB, and Cloudinary. The website allows users to view services, gallery images, branches, academy courses, blogs, and send contact messages. It also includes an admin dashboard to manage bookings, services, courses, gallery, blogs, and messages.
 
-Developed by prabhakar khadka
-for nirjara beauty salon
+## Live Links
+
+Frontend: https://nirjarabeautysalon.vercel.app  
+Backend: https://nirjarabeautysalon.onrender.com
+
+## Tech Stack
+
+### Frontend
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Framer Motion
+- Vercel
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT Authentication
+- Cloudinary
+- Multer
+- Render
+
+## Features
+
+- Public website pages
+  - Home
+  - Services
+  - Gallery
+  - Branches
+  - Academy
+  - Blog
+  - Contact
+  - Booking
+
+- Admin dashboard
+  - Admin login
+  - Manage services
+  - Manage gallery images
+  - Manage academy courses
+  - Manage blogs
+  - View bookings
+  - View contact messages
+
+- Image upload
+  - Admin uploads image from local device
+  - Backend uploads image to Cloudinary
+  - Cloudinary URL is saved in MongoDB
+  - Frontend displays image using the stored URL
+
+## Project Structure
+
+```txt
+NirjaraBeautySalon/
+│
+├── nirjara-frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vercel.json
+│
+└── nirjara-backend/
+    ├── routes/
+    ├── models/
+    ├── middleware/
+    ├── config/
+    ├── server.js
+    └── package.json
+
+    # developed by kdkprabhakar
+    # lets develop mart now
+    # next features i will create website popup
+    
