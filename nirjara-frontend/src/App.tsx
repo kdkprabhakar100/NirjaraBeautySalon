@@ -40,6 +40,10 @@ import Checkout from "./pages/product/Checkout";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminProducts from "./pages/admin/AdminProducts";
 
+//Admin Popup
+import OfferPopup from "./components/OfferPopup";
+import AdminPopup from "./pages/admin/AdminPopup";
+
 function PublicLayout({
   children,
 }: {
@@ -48,7 +52,7 @@ function PublicLayout({
   return (
     <>
       <Navbar />
-
+      <OfferPopup />
       {/* FIXED NAVBAR SPACING */}
       <main >
         {children}
@@ -278,6 +282,14 @@ export default function App() {
           element={
             <AdminLayout>
               <AdminProducts />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/popup"
+          element={
+            <AdminLayout>
+              <AdminPopup />
             </AdminLayout>
           }
         />

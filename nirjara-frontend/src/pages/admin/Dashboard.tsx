@@ -8,6 +8,7 @@ type Stats = {
   pendingBookings: number;
   confirmedBookings: number;
   cancelledBookings: number;
+  popups: number;
 };
 
 export default function Dashboard() {
@@ -33,6 +34,7 @@ export default function Dashboard() {
     ["Cancelled", stats.cancelledBookings],
     ["Gallery Photos", stats.gallery],
     ["Courses", stats.courses],
+    ["Popups", stats.popups],
   ];
 
   return (
