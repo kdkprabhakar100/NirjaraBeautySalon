@@ -78,3 +78,33 @@ NirjaraBeautySalon/
     # lets develop mart now
     # next features i will create website popup
     # nirjara salon
+
+    Website Popup Feature
+
+The Website Popup Feature allows admins to create promotional popups, announcements, offers, and campaigns directly from the admin panel. These popups automatically appear on the website based on start/end dates and active status.
+
+Features
+Admin popup management panel
+Create popup offers dynamically
+Upload popup images from device
+Cloudinary image upload support
+Popup activation/deactivation
+Start date & end date support
+Auto popup display on website
+Delay timing control
+Delete popup functionality
+Fully responsive UI
+Toast notifications
+MongoDB storage
+Technologies Used
+Frontend
+React
+TypeScript
+Tailwind CSS
+React Toastify
+Backend
+Node.js
+Express.js
+MongoDB
+Mongoose
+Cloudinary
