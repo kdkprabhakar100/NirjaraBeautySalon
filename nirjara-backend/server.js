@@ -16,11 +16,12 @@ const blogRoutes = require("./routes/blogRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const productRoutes = require("./routes/productRoutes");
 
-console.log("PRODUCT ROUTES IMPORTED");
-console.log(productRoutes);
 
 // Auth routes
 const authRoutes = require("./routes/authRoutes");
+
+//POPUP ROUTES
+const popupRoutes = require("./routes/popupRoutes");
 
 const app = express();
 
@@ -45,9 +46,8 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/orders", orderRoutes);
-console.log(productRoutes);
 app.use("/api/products", productRoutes);
-
+app.use("/api/popup", popupRoutes);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))

@@ -9,7 +9,7 @@ const popupSchema = new mongoose.Schema(
     buttonLink: String,
     startDate: String,
     endDate: String,
-    delay: Number,
+    priority: Number,
   },
   {
     timestamps: true,

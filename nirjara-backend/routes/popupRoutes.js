@@ -3,6 +3,7 @@ const Popup = require("../models/Popup");
 
 const router = express.Router();
 
+// GET ALL POPUPS
 router.get("/", async (req, res) => {
   try {
     const popups = await Popup.find().sort({ createdAt: -1 });
@@ -12,6 +13,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// CREATE POPUP
 router.post("/", async (req, res) => {
   try {
     const popup = await Popup.create(req.body);
@@ -21,6 +23,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// DELETE POPUP
 router.delete("/:id", async (req, res) => {
   try {
     await Popup.findByIdAndDelete(req.params.id);
