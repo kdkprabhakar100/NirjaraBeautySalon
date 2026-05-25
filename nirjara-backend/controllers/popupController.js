@@ -1,7 +1,7 @@
 const Popup = require("../models/Popup");
 
-// GET
-exports.getPopups = async (req, res) => {
+// GET ALL
+const getPopups = async (req, res) => {
   try {
     const popups = await Popup.find().sort({
       createdAt: -1,
@@ -16,11 +16,9 @@ exports.getPopups = async (req, res) => {
 };
 
 // CREATE
-exports.createPopup = async (req, res) => {
+const createPopup = async (req, res) => {
   try {
-    const popup = await Popup.create(
-      req.body
-    );
+    const popup = await Popup.create(req.body);
 
     res.status(201).json(popup);
   } catch (error) {
@@ -31,10 +29,7 @@ exports.createPopup = async (req, res) => {
 };
 
 // UPDATE
-exports.updatePopup = async (
-  req,
-  res
-) => {
+const updatePopup = async (req, res) => {
   try {
     const popup =
       await Popup.findByIdAndUpdate(
@@ -54,10 +49,7 @@ exports.updatePopup = async (
 };
 
 // DELETE
-exports.deletePopup = async (
-  req,
-  res
-) => {
+const deletePopup = async (req, res) => {
   try {
     await Popup.findByIdAndDelete(
       req.params.id
@@ -71,4 +63,11 @@ exports.deletePopup = async (
       message: error.message,
     });
   }
+};
+
+module.exports = {
+  getPopups,
+  createPopup,
+  updatePopup,
+  deletePopup,
 };

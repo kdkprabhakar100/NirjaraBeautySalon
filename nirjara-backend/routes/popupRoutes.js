@@ -1,39 +1,53 @@
 const express = require("express");
-const Popup = require("../models/Popup");
 
 const router = express.Router();
 
-// GET ALL POPUPS
-router.get("/", async (req, res) => {
-  try {
-    const popups = await Popup.find().sort({ createdAt: -1 });
-    res.json(popups);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+const Popup = require("../models/Popup");
 
-// CREATE POPUP
-router.post("/", async (req, res) => {
-  try {
-    const popup = await Popup.create(req.body);
-    res.status(201).json(popup);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+const {
+  getPopups,
+  createPopup,
+  updatePopup,
+  deletePopup,
+} = require("../controllers/popupController");
 
-// DELETE POPUP
-router.delete("/:id", async (req, res) => {
+// GET ACTIVE POPUP
+router.get("/active", async (req, res) => {
   try {
-    await Popup.findByIdAndDelete(req.params.id);
+    const today = new Date();
 
-    res.json({
-      message: "Popup deleted",
+    const popup = await Popup.findOne({
+      active: true,
+
+      startDate: {
+        $lte: today,
+      },
+
+      endDate: {
+        $gte: today,
+      },
+    }).sort({
+      createdAt: -1,
     });
+
+    res.json(popup);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+    });
   }
 });
+
+// GET ALL
+router.get("/", getPopups);
+
+// CREATE
+router.post("/", createPopup);
+
+// UPDATE
+router.put("/:id", updatePopup);
+
+// DELETE
+router.delete("/:id", deletePopup);
 
 module.exports = router;
