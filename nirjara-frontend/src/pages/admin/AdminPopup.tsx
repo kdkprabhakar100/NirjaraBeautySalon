@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { toast } from "react-toastify";
 
 type Popup = {
@@ -14,22 +15,24 @@ type Popup = {
 
   buttonLink: string;
 
-  active: boolean;
-
   delay: number;
 
   startDate: string;
 
   endDate: string;
+
+  active: boolean;
 };
 
 export default function AdminPopup() {
-  const [popups, setPopups] = useState<
-    Popup[]
-  >([]);
+  const [popups, setPopups] = useState<Popup[]>([]);
 
-  const [uploading, setUploading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [uploading, setUploading] = useState(false);
+
+  const [editingId, setEditingId] =
+    useState<string | null>(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -49,20 +52,11 @@ export default function AdminPopup() {
     endDate: "",
   });
 
-  const token = localStorage.getItem(
-    "token"
-  );
-
   // FETCH POPUPS
   const fetchPopups = async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/popup`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `${import.meta.env.VITE_API_URL}/api/popup`
       );
 
       const data = await res.json();
@@ -121,42 +115,30 @@ export default function AdminPopup() {
     }
   };
 
-  // CREATE POPUP
+  // CREATE OR UPDATE
   const handleSubmit = async (
     e: React.FormEvent
   ) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/popup`,
-        {
-          method: "POST",
+      setLoading(true);
 
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            Authorization: `Bearer ${token}`,
-          },
-
-          body: JSON.stringify({
-            ...form,
-
-            active: true,
-          }),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error(
-          "Failed to create popup"
+      if (editingId) {
+        await axios.put(
+          `${import.meta.env.VITE_API_URL}/api/popup/${editingId}`,
+          form
         );
-      }
 
-      toast.success(
-        "Popup created successfully 💖"
-      );
+        toast.success("Popup updated 💖");
+      } else {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/popup`,
+          form
+        );
+
+        toast.success("Popup created 💖");
+      }
 
       setForm({
         title: "",
@@ -176,28 +158,25 @@ export default function AdminPopup() {
         endDate: "",
       });
 
+      setEditingId(null);
+
       fetchPopups();
     } catch (error) {
       console.log(error);
 
-      toast.error("Failed to create popup");
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // DELETE POPUP
-  const deletePopup = async (
-    id: string
-  ) => {
-    try {
-      await fetch(
-        `${import.meta.env.VITE_API_URL}/api/popup/${id}`,
-        {
-          method: "DELETE",
+  // DELETE
+  const deletePopup = async (id: string) => {
+    if (!window.confirm("Delete popup?")) return;
 
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/popup/${id}`
       );
 
       toast.success("Popup deleted");
@@ -211,74 +190,81 @@ export default function AdminPopup() {
   };
 
   // TOGGLE ACTIVE
-  const togglePopup = async (
-    popup: Popup
-  ) => {
+  const togglePopup = async (id: string) => {
     try {
-      await fetch(
-        `${import.meta.env.VITE_API_URL}/api/popup/${popup._id}`,
-        {
-          method: "PUT",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            Authorization: `Bearer ${token}`,
-          },
-
-          body: JSON.stringify({
-            active: !popup.active,
-          }),
-        }
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/popup/${id}/toggle`
       );
-
-      toast.success("Popup updated");
 
       fetchPopups();
     } catch (error) {
       console.log(error);
 
-      toast.error("Failed");
+      toast.error("Toggle failed");
     }
   };
 
+  // EDIT
+  const editPopup = (popup: Popup) => {
+    setEditingId(popup._id);
+
+    setForm({
+      title: popup.title,
+
+      subtitle: popup.subtitle,
+
+      image: popup.image,
+
+      buttonText: popup.buttonText,
+
+      buttonLink: popup.buttonLink,
+
+      delay: popup.delay,
+
+      startDate: popup.startDate
+        ?.split("T")[0],
+
+      endDate: popup.endDate?.split("T")[0],
+    });
+
+    window.scrollTo({
+      top: 0,
+
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <section className="min-h-screen bg-[#FFF5F8] p-6 md:p-10">
-      <div className="mx-auto max-w-7xl">
+    <div className="space-y-10">
+      {/* FORM */}
+      <div className="rounded-[40px] bg-white p-8 shadow-sm">
+        <h1 className="font-serif text-5xl text-[#E75480]">
+          Website Popup
+        </h1>
 
-        {/* HEADER */}
-        <div className="text">
-          <h1 className="font-serif text-5xl text-[#E75480]">
-            Website Popup
-          </h1>
+        <p className="mt-3 text-[#8A6F78]">
+          Manage website offers &
+          announcements
+        </p>
 
-          <p className="mt-4 text-[#8A6F78]">
-            Manage website offers &
-            announcements
-          </p>
-        </div>
-
-        {/* FORM */}
         <form
           onSubmit={handleSubmit}
-          className="mt-12 rounded-[32px] bg-white p-8 shadow-sm"
+          className="mt-10 space-y-6"
         >
-
           <div className="grid gap-6 md:grid-cols-2">
-
             <input
               type="text"
               placeholder="Popup Title"
-              required
               value={form.title}
               onChange={(e) =>
                 setForm({
                   ...form,
+
                   title: e.target.value,
                 })
               }
-              className="rounded-2xl border border-[#F3D3DC] p-4 outline-none"
+              className="rounded-2xl border border-[#E75480]/20 p-4 outline-none"
+              required
             />
 
             <input
@@ -288,11 +274,12 @@ export default function AdminPopup() {
               onChange={(e) =>
                 setForm({
                   ...form,
+
                   buttonText:
                     e.target.value,
                 })
               }
-              className="rounded-2xl border border-[#F3D3DC] p-4 outline-none"
+              className="rounded-2xl border border-[#E75480]/20 p-4 outline-none"
             />
 
             <input
@@ -302,88 +289,88 @@ export default function AdminPopup() {
               onChange={(e) =>
                 setForm({
                   ...form,
+
                   buttonLink:
                     e.target.value,
                 })
               }
-              className="rounded-2xl border border-[#F3D3DC] p-4 outline-none"
+              className="rounded-2xl border border-[#E75480]/20 p-4 outline-none"
             />
 
             <input
               type="number"
-              placeholder="Delay (ms)"
+              placeholder="Delay"
               value={form.delay}
               onChange={(e) =>
                 setForm({
                   ...form,
+
                   delay: Number(
                     e.target.value
                   ),
                 })
               }
-              className="rounded-2xl border border-[#F3D3DC] p-4 outline-none"
+              className="rounded-2xl border border-[#E75480]/20 p-4 outline-none"
             />
 
             <input
               type="date"
-              required
               value={form.startDate}
               onChange={(e) =>
                 setForm({
                   ...form,
+
                   startDate:
                     e.target.value,
                 })
               }
-              className="rounded-2xl border border-[#F3D3DC] p-4 outline-none"
+              className="rounded-2xl border border-[#E75480]/20 p-4 outline-none"
             />
 
             <input
               type="date"
-              required
               value={form.endDate}
               onChange={(e) =>
                 setForm({
                   ...form,
+
                   endDate:
                     e.target.value,
                 })
               }
-              className="rounded-2xl border border-[#F3D3DC] p-4 outline-none"
+              className="rounded-2xl border border-[#E75480]/20 p-4 outline-none"
             />
           </div>
 
-          {/* SUBTITLE */}
           <textarea
             placeholder="Popup Subtitle"
-            rows={4}
             value={form.subtitle}
             onChange={(e) =>
               setForm({
                 ...form,
+
                 subtitle: e.target.value,
               })
             }
-            className="mt-6 w-full rounded-2xl border border-[#F3D3DC] p-4 outline-none"
+            className="h-40 w-full rounded-3xl border border-[#E75480]/20 p-5 outline-none"
           />
 
-          {/* IMAGE UPLOAD */}
-          <div className="mt-6">
-
-            <label className="mb-3 block text-sm text-[#8A6F78]">
+          {/* IMAGE */}
+          <div>
+            <p className="mb-3 text-sm text-[#8A6F78]">
               Popup Image
-            </label>
+            </p>
 
             <input
               type="file"
               accept="image/*"
               onChange={uploadImage}
-              className="w-full rounded-2xl border border-[#F3D3DC] bg-white p-4"
+              className="w-full rounded-2xl border border-[#E75480]/20 p-4"
             />
 
             {uploading && (
               <p className="mt-3 text-sm text-[#E75480]">
-                Uploading image...
+                Uploading...
               </p>
             )}
 
@@ -391,98 +378,122 @@ export default function AdminPopup() {
               <img
                 src={form.image}
                 alt="Preview"
-                className="mt-4 h-56 w-full rounded-3xl object-cover"
+                className="mt-5 h-64 w-full rounded-3xl object-cover"
               />
             )}
           </div>
 
-          {/* SUBMIT BUTTON */}
           <button
             type="submit"
-            className="mt-8 rounded-full bg-[#E75480] px-8 py-4 text-sm uppercase tracking-[3px] text-white transition hover:bg-[#d63c6d]"
+            disabled={loading}
+            className="rounded-full bg-[#E75480] px-10 py-4 text-sm uppercase tracking-[4px] text-white"
           >
-            Create Popup
+            {editingId
+              ? "Update Popup"
+              : "Create Popup"}
           </button>
         </form>
+      </div>
 
-        {/* POPUPS LIST */}
-        <div className="mt-10 grid gap-6 lg:grid-cols-2">
-
-          {popups.map((popup) => (
-            <div
-              key={popup._id}
-              className="rounded-[30px] bg-white p-6 shadow-sm"
-            >
-
+      {/* POPUP LIST */}
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {popups.map((popup) => (
+          <div
+            key={popup._id}
+            className="overflow-hidden rounded-[35px] bg-white shadow-sm"
+          >
+            <div className="relative">
               <img
                 src={popup.image}
                 alt={popup.title}
-                className="h-60 w-full rounded-3xl object-cover"
+                className="h-72 w-full object-cover"
               />
 
-              <h2 className="mt-6 font-serif text-3xl text-[#3A2A2F]">
+              <span
+                className={`absolute right-5 top-5 rounded-full px-5 py-2 text-sm ${
+                  popup.active
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {popup.active
+                  ? "Active"
+                  : "Inactive"}
+              </span>
+            </div>
+
+            <div className="space-y-3 p-6">
+              <h2 className="font-serif text-5xl text-[#3A2A2F]">
                 {popup.title}
               </h2>
 
-              <p className="mt-3 leading-7 text-[#8A6F78]">
+              <p className="text-[#8A6F78]">
                 {popup.subtitle}
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-
-                <span className="rounded-full bg-[#FFF5F8] px-4 py-2 text-sm text-[#E75480]">
-                  {popup.active
-                    ? "Active"
-                    : "Inactive"}
-                </span>
-
-                <span className="rounded-full bg-[#FFF5F8] px-4 py-2 text-sm text-[#E75480]">
-                  Delay: {popup.delay}ms
-                </span>
-              </div>
-
-              <div className="mt-4 text-sm text-[#8A6F78]">
+              <div className="space-y-1 text-sm text-[#E75480]">
                 <p>
-                  Start:
-                  {" "}
+                  <strong>Start:</strong>{" "}
                   {new Date(
                     popup.startDate
                   ).toLocaleDateString()}
                 </p>
 
-                <p className="mt-1">
-                  End:
-                  {" "}
+                <p>
+                  <strong>End:</strong>{" "}
                   {new Date(
                     popup.endDate
                   ).toLocaleDateString()}
                 </p>
+
+                <p>
+                  <strong>Delay:</strong>{" "}
+                  {popup.delay} ms
+                </p>
               </div>
 
-              <div className="mt-8 flex gap-3">
-
+              <div className="flex flex-wrap gap-3 pt-3">
                 <button
                   onClick={() =>
-                    togglePopup(popup)
+                    editPopup(popup)
                   }
-                  className="rounded-full bg-blue-100 px-6 py-3 text-sm"
+                  className="rounded-full bg-blue-100 px-5 py-2 text-sm text-blue-700"
                 >
-                  Toggle
+                  Edit
                 </button>
 
                 <button
                   onClick={() =>
-                    deletePopup(popup._id)
+                    deletePopup(
+                      popup._id
+                    )
                   }
-                  className="rounded-full bg-red-100 px-6 py-3 text-sm text-red-600"
+                  className="rounded-full bg-red-100 px-5 py-2 text-sm text-red-700"
                 >
                   Delete
                 </button>
+
+                <button
+                  onClick={() =>
+                    togglePopup(
+                      popup._id
+                    )
+                  }
+                  className={`rounded-full px-5 py-2 text-sm ${
+                    popup.active
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-green-100 text-green-700"
+                  }`}
+                >
+                  {popup.active
+                    ? "Deactivate"
+                    : "Activate"}
+                </button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }

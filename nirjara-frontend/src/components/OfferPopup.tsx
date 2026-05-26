@@ -24,13 +24,6 @@ export default function OfferPopup() {
   // FETCH ACTIVE POPUP
   const fetchPopup = async () => {
     try {
-      const alreadyShown =
-        localStorage.getItem(
-          "nirjara-popup-shown"
-        );
-
-      if (alreadyShown) return;
-
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/popup/active`
       );
@@ -41,14 +34,11 @@ export default function OfferPopup() {
 
       setPopup(data);
 
+      // SHOW AFTER DELAY
       setTimeout(() => {
         setOpen(true);
-
-        localStorage.setItem(
-          "nirjara-popup-shown",
-          "true"
-        );
       }, data.delay || 3000);
+
     } catch (error) {
       console.log(error);
     }
@@ -114,8 +104,11 @@ export default function OfferPopup() {
                 right-5
                 top-5
                 z-20
+                flex
                 h-10
                 w-10
+                items-center
+                justify-center
                 rounded-full
                 bg-white/90
                 text-xl

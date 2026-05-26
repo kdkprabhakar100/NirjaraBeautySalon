@@ -11,7 +11,11 @@ const {
   deletePopup,
 } = require("../controllers/popupController");
 
+
+
+// =======================================
 // GET ACTIVE POPUP
+// =======================================
 router.get("/active", async (req, res) => {
   try {
     const today = new Date();
@@ -31,6 +35,7 @@ router.get("/active", async (req, res) => {
     });
 
     res.json(popup);
+
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -38,16 +43,66 @@ router.get("/active", async (req, res) => {
   }
 });
 
-// GET ALL
+
+
+// =======================================
+// GET ALL POPUPS
+// =======================================
 router.get("/", getPopups);
 
-// CREATE
+
+
+// =======================================
+// CREATE POPUP
+// =======================================
 router.post("/", createPopup);
 
-// UPDATE
+
+
+// =======================================
+// UPDATE POPUP
+// =======================================
 router.put("/:id", updatePopup);
 
-// DELETE
+
+
+// =======================================
+// TOGGLE POPUP ACTIVE / INACTIVE
+// =======================================
+router.put("/:id/toggle", async (req, res) => {
+  try {
+
+    const popup = await Popup.findById(req.params.id);
+
+    if (!popup) {
+      return res.status(404).json({
+        message: "Popup not found",
+      });
+    }
+
+    popup.active = !popup.active;
+
+    await popup.save();
+
+    res.json({
+      message: "Popup updated successfully",
+      popup,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+
+
+// =======================================
+// DELETE POPUP
+// =======================================
 router.delete("/:id", deletePopup);
+
+
 
 module.exports = router;
