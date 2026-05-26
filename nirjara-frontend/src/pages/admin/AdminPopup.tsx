@@ -190,19 +190,22 @@ export default function AdminPopup() {
   };
 
   // TOGGLE ACTIVE
-  const togglePopup = async (id: string) => {
-    try {
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/popup/${id}/toggle`
-      );
+const togglePopup = async (id: string) => {
+  try {
+    await axios.put(
+      `${import.meta.env.VITE_API_URL}/api/popup/${id}/toggle`
+    );
 
-      fetchPopups();
-    } catch (error) {
-      console.log(error);
+    toast.success("Popup updated 💖");
 
-      toast.error("Toggle failed");
-    }
-  };
+    fetchPopups();
+
+  } catch (error) {
+    console.log(error);
+
+    toast.error("Toggle failed");
+  }
+};
 
   // EDIT
   const editPopup = (popup: Popup) => {
@@ -474,20 +477,14 @@ export default function AdminPopup() {
                 </button>
 
                 <button
-                  onClick={() =>
-                    togglePopup(
-                      popup._id
-                    )
-                  }
-                  className={`rounded-full px-5 py-2 text-sm ${
+                  onClick={() => togglePopup(popup._id)}
+                  className={`mt-4 rounded-full px-5 py-2 text-sm ${
                     popup.active
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-green-100 text-green-700"
+                      ? "bg-[#F7E7A9] text-[#9A7B00]"
+                      : "bg-[#DDF8E7] text-[#008A4E]"
                   }`}
                 >
-                  {popup.active
-                    ? "Deactivate"
-                    : "Activate"}
+                  {popup.active ? "Deactivate" : "Activate"}
                 </button>
               </div>
             </div>
