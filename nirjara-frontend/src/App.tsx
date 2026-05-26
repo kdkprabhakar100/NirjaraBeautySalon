@@ -44,6 +44,11 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import OfferPopup from "./components/OfferPopup";
 import AdminPopup from "./pages/admin/AdminPopup";
 
+//Admin Events
+import AdminEvents from "./pages/admin/AdminEvents";
+import Events from "./pages/public/Events";
+import EventDetails from "./pages/public/EventDetails";
+
 function PublicLayout({
   children,
 }: {
@@ -189,6 +194,22 @@ export default function App() {
             </PublicLayout>
           }
         />
+        <Route
+          path="/events"
+          element={
+            <PublicLayout>
+              <Events />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/events/:id"
+          element={
+            <PublicLayout>
+              <EventDetails />
+            </PublicLayout>
+          }
+        />
 
         {/* ADMIN LOGIN */}
         <Route
@@ -290,6 +311,14 @@ export default function App() {
           element={
             <AdminLayout>
               <AdminPopup />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/events"
+          element={
+            <AdminLayout>
+              <AdminEvents />
             </AdminLayout>
           }
         />

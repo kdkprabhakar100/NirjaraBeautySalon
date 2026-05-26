@@ -23,6 +23,9 @@ const authRoutes = require("./routes/authRoutes");
 //POPUP ROUTES
 const popupRoutes = require("./routes/popupRoutes");
 
+// EVENT ROUTES
+const eventRoutes = require("./routes/eventRoutes");
+
 const app = express();
 
 // middleware MUST come before routes
@@ -48,6 +51,9 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/popup", popupRoutes);
+app.use("/api/events", eventRoutes);
+
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
