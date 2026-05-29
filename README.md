@@ -108,3 +108,33 @@ Express.js
 MongoDB
 Mongoose
 Cloudinary
+
+backend/
+│
+├── controllers/
+│   ├── eventController.js
+│   └── eventRegistrationController.js
+│
+├── models/
+│   ├── Event.js
+│   └── EventRegistration.js
+│
+├── routes/
+│   ├── eventRoutes.js
+│   └── eventRegistrationRoutes.js
+│
+└── server.js
+
+
+frontend/
+│
+├── src/
+│   ├── pages/
+│   │   ├── public/
+│   │   │   ├── Events.tsx
+│   │   │   └── EventDetails.tsx
+│   │   │
+│   │   └── admin/
+│   │       └── AdminEvents.tsx
+│   │
+│   └── App.tsx
