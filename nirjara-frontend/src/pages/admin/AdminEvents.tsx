@@ -67,31 +67,39 @@ const AdminEvents = () => {
   // =============================
   // IMAGE UPLOAD
   // =============================
-  const uploadImage = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
+const uploadImage = async (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0];
 
-    if (!file) return;
+  if (!file) return;
 
-    const data = new FormData();
+  const data = new FormData();
 
-    data.append("image", file);
+  data.append("image", file);
 
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/upload`,
-        data
-      );
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/upload`,
+      data,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data",
+        },
+      }
+    );
 
-      setFormData({
-        ...formData,
-        image: res.data.image,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    setFormData({
+      ...formData,
+      image: res.data.image,
+    });
+
+    console.log(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   // =============================
   // CREATE EVENT
