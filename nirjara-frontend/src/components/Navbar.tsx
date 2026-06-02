@@ -12,6 +12,7 @@ const navItems = [
   { label: "Blog", path: "/blog" },
   { label: "Contact", path: "/contact" },
   { label: "Products", path: "/products" },
+  { label: "events", path: "/events" },
 ];
 
 export default function Navbar() {
