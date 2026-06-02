@@ -84,8 +84,7 @@ const EventDetails = () => {
         <img
           src={event.image}
           alt={event.title}
-          className="w-full h-full object-cover"
-        />
+          className="w-full h-[250px] sm:h-[350px] md:h-[500px] object-cover"        />
 
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
           <motion.div

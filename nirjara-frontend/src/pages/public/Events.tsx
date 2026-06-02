@@ -51,13 +51,13 @@ const Events = () => {
       {/* HERO SECTION */}
       {/* ============================= */}
 
-      <div className="relative h-[400px] flex items-center justify-center bg-gradient-to-r from-pink-100 to-pink-200">
+      <div className="relative py-10 sm:py-14 md:py-16 flex items-center justify-center bg-gradient-to-r from-pink-100 to-pink-200">
         <div className="text-center px-4">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold text-pink-700 mb-4">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-bold text-pink-700 mb-4">
             Nirjara Events
           </h1>
 
-          <p className="text-gray-700 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-700 text-sm sm:text-lg max-w-2xl mx-auto">
             Discover exclusive beauty masterclasses,
             bridal workshops, academy events, and
             premium salon experiences.
@@ -70,7 +70,7 @@ const Events = () => {
       {/* ============================= */}
 
       {featuredEvent && (
-        <section className="max-w-7xl mx-auto px-4 py-16">
+        <section className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-14">
           <div className="mb-8">
             <span className="bg-pink-600 text-white px-5 py-2 rounded-full text-sm">
               Featured Event
@@ -79,18 +79,20 @@ const Events = () => {
 
           <motion.div
             whileHover={{ scale: 1.01 }}
-            className="grid lg:grid-cols-2 gap-10 bg-white rounded-3xl shadow-xl overflow-hidden"
+            className="grid lg:grid-cols-2 gap-8 lg:gap-10 bg-white rounded-3xl shadow-xl overflow-hidden"
           >
             {/* IMAGE */}
+            <div className="overflow-hidden">
               <img
                 src={featuredEvent.image}
                 alt={featuredEvent.title}
-                className="w-full h-full object-cover"
+                className="w-full h-[250px] sm:h-[350px] lg:h-full object-cover transition duration-500 hover:scale-105"
               />
+            </div>
 
             {/* CONTENT */}
-            <div className="p-10 flex flex-col justify-center">
-              <h2 className="text-4xl font-serif font-bold text-pink-700 mb-5">
+            <div className="p-6 md:p-10 flex flex-col justify-center">
+              <h2 className="text-3xl md:text-4xl font-serif font-bold text-pink-700 mb-5">
                 {featuredEvent.title}
               </h2>
 
@@ -130,8 +132,8 @@ const Events = () => {
       {/* ALL EVENTS */}
       {/* ============================= */}
 
-      <section className="max-w-7xl mx-auto px-4 pb-20">
-        <h2 className="text-4xl font-serif font-bold text-center text-pink-700 mb-14">
+      <section className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-14">
+        <h2 className="text-3xl md:text-4xl font-serif font-bold text-center text-pink-700 mb-10 md:mb-14">
           Upcoming Events
         </h2>
 
@@ -140,19 +142,19 @@ const Events = () => {
             No events available.
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
             {events.map((event) => (
               <motion.div
                 key={event._id}
                 whileHover={{ y: -8 }}
-                className="bg-white rounded-3xl overflow-hidden shadow-lg"
+                className="group bg-white rounded-3xl overflow-hidden shadow-lg w-full h-full flex flex-col"
               >
                 {/* IMAGE */}
-                <div className="relative">
+                <div className="relative overflow-hidden rounded-t-3xl">
                   <img
                     src={event.image}
                     alt={event.title}
-                    className="w-full h-72 object-cover"
+                    className="w-full h-56 sm:h-64 lg:h-72 object-cover transition duration-500 group-hover:scale-105"
                   />
 
                   <div className="absolute top-4 left-4 bg-pink-600 text-white px-4 py-2 rounded-xl text-sm shadow-lg">
@@ -163,7 +165,7 @@ const Events = () => {
                 </div>
 
                 {/* CONTENT */}
-                <div className="p-6">
+                <div className="p-5 md:p-6 flex flex-col flex-1">
                   <h3 className="text-2xl font-serif font-bold text-pink-700 mb-3">
                     {event.title}
                   </h3>
@@ -182,12 +184,15 @@ const Events = () => {
                     </p>
                   </div>
 
-                  <Link
-                    to={`/events/${event._id}`}
-                    className="inline-block bg-pink-600 hover:bg-pink-700 transition text-white px-6 py-3 rounded-xl"
-                  >
-                    View Details
-                  </Link>
+                  {/* BUTTON */}
+                  <div className="mt-auto pt-4">
+                    <Link
+                      to={`/events/${event._id}`}
+                      className="inline-block bg-pink-600 hover:bg-pink-700 transition text-white px-6 py-3 rounded-xl"
+                    >
+                      View Details
+                    </Link>
+                  </div>
                 </div>
               </motion.div>
             ))}

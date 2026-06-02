@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
+import Cropper from "react-easy-crop";
+import { Area } from "react-easy-crop";
+import getCroppedImg from "../../utils/cropImage";
 
 interface EventType {
   _id: string;
   title: string;
   description: string;
   image: string;
-  location: string;
+ location: string;
   date: string;
   time: string;
   featured: boolean;
@@ -16,9 +20,8 @@ interface EventType {
 const AdminEvents = () => {
   const [events, setEvents] = useState<EventType[]>([]);
 
-  const [editingId, setEditingId] = useState<string | null>(
-    null
-  );
+  const [editingId, setEditingId] =
+    useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -32,8 +35,29 @@ const AdminEvents = () => {
   });
 
   // =============================
+  // CROPPER STATES
+  // =============================
+
+  const [crop, setCrop] = useState({
+    x: 0,
+    y: 0,
+  });
+
+  const [zoom, setZoom] = useState(1);
+
+  const [croppedAreaPixels, setCroppedAreaPixels] =
+    useState<any>(null);
+
+  const [imageSrc, setImageSrc] =
+    useState("");
+
+  const [croppedImage, setCroppedImage] =
+    useState("");
+
+  // =============================
   // FETCH EVENTS
   // =============================
+
   const fetchEvents = async () => {
     try {
       const res = await axios.get(
@@ -53,6 +77,7 @@ const AdminEvents = () => {
   // =============================
   // HANDLE CHANGE
   // =============================
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement
@@ -65,8 +90,20 @@ const AdminEvents = () => {
   };
 
   // =============================
-  // IMAGE UPLOAD
+  // CROP COMPLETE
   // =============================
+
+  const onCropComplete = (
+    croppedArea: Area,
+    croppedAreaPixels: Area
+  ) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  // =============================
+  // IMAGE SELECT
+  // =============================
+
   const uploadImage = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -74,11 +111,30 @@ const AdminEvents = () => {
 
     if (!file) return;
 
-    const data = new FormData();
+    const imageUrl =
+      URL.createObjectURL(file);
 
-    data.append("image", file);
+    setImageSrc(imageUrl);
+  };
 
+  // =============================
+  // HANDLE CROP DONE
+  // =============================
+
+  const handleCropDone = async () => {
     try {
+      const croppedBlob: any =
+        await getCroppedImg(
+          imageSrc,
+          croppedAreaPixels
+        );
+
+      if (!croppedBlob) return;
+
+      const data = new FormData();
+
+      data.append("image", croppedBlob);
+
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/upload`,
         data,
@@ -90,12 +146,16 @@ const AdminEvents = () => {
         }
       );
 
-      console.log(res.data);
-
       setFormData({
         ...formData,
         image: res.data.imageUrl,
       });
+
+      setCroppedImage(
+        res.data.imageUrl
+      );
+
+      setImageSrc("");
     } catch (error) {
       console.log(error);
     }
@@ -104,6 +164,7 @@ const AdminEvents = () => {
   // =============================
   // CREATE EVENT
   // =============================
+
   const createEvent = async (
     e: React.FormEvent
   ) => {
@@ -126,6 +187,8 @@ const AdminEvents = () => {
         buttonLink: "/contact",
       });
 
+      setCroppedImage("");
+
       fetchEvents();
     } catch (error) {
       console.log(error);
@@ -135,7 +198,10 @@ const AdminEvents = () => {
   // =============================
   // EDIT EVENT
   // =============================
-  const editEvent = (event: EventType) => {
+
+  const editEvent = (
+    event: EventType
+  ) => {
     setEditingId(event._id);
 
     setFormData({
@@ -143,11 +209,14 @@ const AdminEvents = () => {
       description: event.description,
       image: event.image,
       location: event.location,
-      date: event.date.split("T")[0],
+      date:
+        event.date.split("T")[0],
       time: event.time,
       buttonText: "Register Now",
       buttonLink: "/contact",
     });
+
+    setCroppedImage(event.image);
 
     window.scrollTo({
       top: 0,
@@ -158,6 +227,7 @@ const AdminEvents = () => {
   // =============================
   // UPDATE EVENT
   // =============================
+
   const updateEvent = async (
     e: React.FormEvent
   ) => {
@@ -182,6 +252,8 @@ const AdminEvents = () => {
         buttonLink: "/contact",
       });
 
+      setCroppedImage("");
+
       fetchEvents();
     } catch (error) {
       console.log(error);
@@ -191,7 +263,10 @@ const AdminEvents = () => {
   // =============================
   // DELETE EVENT
   // =============================
-  const deleteEvent = async (id: string) => {
+
+  const deleteEvent = async (
+    id: string
+  ) => {
     try {
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/events/${id}`
@@ -206,6 +281,7 @@ const AdminEvents = () => {
   // =============================
   // TOGGLE FEATURED
   // =============================
+
   const toggleFeatured = async (
     id: string
   ) => {
@@ -223,6 +299,7 @@ const AdminEvents = () => {
   // =============================
   // TOGGLE ACTIVE
   // =============================
+
   const toggleActive = async (
     id: string
   ) => {
@@ -239,20 +316,24 @@ const AdminEvents = () => {
 
   return (
     <div className="p-6 bg-pink-50 min-h-screen">
+      {/* TITLE */}
+
       <h1 className="text-4xl font-bold text-pink-600 mb-8">
         Admin Events
       </h1>
 
-      {/* ============================= */}
       {/* FORM */}
-      {/* ============================= */}
 
       <form
         onSubmit={
-          editingId ? updateEvent : createEvent
+          editingId
+            ? updateEvent
+            : createEvent
         }
         className="bg-white rounded-3xl shadow-xl p-6 mb-12 space-y-5"
       >
+        {/* TITLE */}
+
         <input
           type="text"
           name="title"
@@ -262,6 +343,8 @@ const AdminEvents = () => {
           className="w-full border p-4 rounded-xl"
           required
         />
+
+        {/* DESCRIPTION */}
 
         <textarea
           name="description"
@@ -273,6 +356,8 @@ const AdminEvents = () => {
           required
         />
 
+        {/* LOCATION */}
+
         <input
           type="text"
           name="location"
@@ -282,6 +367,8 @@ const AdminEvents = () => {
           className="w-full border p-4 rounded-xl"
           required
         />
+
+        {/* DATE TIME */}
 
         <div className="grid md:grid-cols-2 gap-4">
           <input
@@ -304,22 +391,93 @@ const AdminEvents = () => {
           />
         </div>
 
-        {/* IMAGE */}
-        <input
-          type="file"
-          onChange={uploadImage}
-          className="w-full border p-4 rounded-xl"
-        />
+        {/* IMAGE UPLOAD */}
 
-        {formData.image && (
-          <img
-            src={formData.image}
-            alt=""
-            className="w-40 h-40 object-cover rounded-2xl"
+        <div className="space-y-4">
+          <input
+            type="file"
+            onChange={uploadImage}
+            className="w-full border p-4 rounded-xl"
           />
-        )}
 
-        {/* BUTTONS */}
+          <p className="text-sm text-gray-500">
+            Recommended size:
+            1200 × 800 px
+          </p>
+
+          {/* CROPPER */}
+
+          {imageSrc && (
+            <>
+              <div className="relative w-full h-[400px] bg-black rounded-2xl overflow-hidden">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={3 / 2}
+                  onCropChange={
+                    setCrop
+                  }
+                  onZoomChange={
+                    setZoom
+                  }
+                  onCropComplete={
+                    onCropComplete
+                  }
+                />
+              </div>
+
+              {/* ZOOM */}
+
+              <div>
+                <label className="text-sm text-gray-600">
+                  Zoom
+                </label>
+
+                <input
+                  type="range"
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  value={zoom}
+                  onChange={(e) =>
+                    setZoom(
+                      Number(
+                        e.target.value
+                      )
+                    )
+                  }
+                  className="w-full"
+                />
+              </div>
+
+              {/* DONE BUTTON */}
+
+              <button
+                type="button"
+                onClick={
+                  handleCropDone
+                }
+                className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl"
+              >
+                Done Cropping
+              </button>
+            </>
+          )}
+
+          {/* PREVIEW */}
+
+          {croppedImage && (
+            <img
+              src={croppedImage}
+              alt=""
+              className="w-48 h-32 object-cover rounded-2xl border"
+            />
+          )}
+        </div>
+
+        {/* ACTION BUTTONS */}
+
         <div className="flex gap-4 flex-wrap">
           <button
             type="submit"
@@ -338,14 +496,21 @@ const AdminEvents = () => {
 
                 setFormData({
                   title: "",
-                  description: "",
+                  description:
+                    "",
                   image: "",
                   location: "",
                   date: "",
                   time: "",
-                  buttonText: "Register Now",
-                  buttonLink: "/contact",
+                  buttonText:
+                    "Register Now",
+                  buttonLink:
+                    "/contact",
                 });
+
+                setCroppedImage(
+                  ""
+                );
               }}
               className="bg-gray-400 hover:bg-gray-500 text-white px-8 py-3 rounded-xl"
             >
@@ -355,17 +520,19 @@ const AdminEvents = () => {
         </div>
       </form>
 
-      {/* ============================= */}
       {/* EVENTS GRID */}
-      {/* ============================= */}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {events.map((event) => (
-          <div
+          <motion.div
             key={event._id}
+            whileHover={{
+              y: -6,
+            }}
             className="bg-white rounded-3xl overflow-hidden shadow-xl"
           >
             {/* IMAGE */}
+
             <img
               src={event.image}
               alt={event.title}
@@ -373,6 +540,7 @@ const AdminEvents = () => {
             />
 
             {/* CONTENT */}
+
             <div className="p-6">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-2xl font-bold text-pink-700">
@@ -407,11 +575,14 @@ const AdminEvents = () => {
                 </p>
               </div>
 
-              {/* ACTION BUTTONS */}
+              {/* BUTTONS */}
+
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={() =>
-                    editEvent(event)
+                    editEvent(
+                      event
+                    )
                   }
                   className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl"
                 >
@@ -420,7 +591,9 @@ const AdminEvents = () => {
 
                 <button
                   onClick={() =>
-                    toggleFeatured(event._id)
+                    toggleFeatured(
+                      event._id
+                    )
                   }
                   className={`px-4 py-2 rounded-xl text-white ${
                     event.featured
@@ -435,7 +608,9 @@ const AdminEvents = () => {
 
                 <button
                   onClick={() =>
-                    toggleActive(event._id)
+                    toggleActive(
+                      event._id
+                    )
                   }
                   className={`px-4 py-2 rounded-xl text-white ${
                     event.active
@@ -450,7 +625,9 @@ const AdminEvents = () => {
 
                 <button
                   onClick={() =>
-                    deleteEvent(event._id)
+                    deleteEvent(
+                      event._id
+                    )
                   }
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl"
                 >
@@ -458,7 +635,7 @@ const AdminEvents = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
