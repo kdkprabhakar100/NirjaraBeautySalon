@@ -82,11 +82,11 @@ const Events = () => {
             className="grid lg:grid-cols-2 gap-10 bg-white rounded-3xl shadow-xl overflow-hidden"
           >
             {/* IMAGE */}
-            <img
-              src={`${import.meta.env.VITE_API_URL}${featuredEvent.image}`}
-              alt={featuredEvent.title}
-              className="w-full h-full object-cover"
-            />
+              <img
+                src={featuredEvent.image}
+                alt={featuredEvent.title}
+                className="w-full h-full object-cover"
+              />
 
             {/* CONTENT */}
             <div className="p-10 flex flex-col justify-center">
@@ -150,7 +150,7 @@ const Events = () => {
                 {/* IMAGE */}
                 <div className="relative">
                   <img
-                    src={`${import.meta.env.VITE_API_URL}${event.image}`}
+                    src={event.image}
                     alt={event.title}
                     className="w-full h-72 object-cover"
                   />

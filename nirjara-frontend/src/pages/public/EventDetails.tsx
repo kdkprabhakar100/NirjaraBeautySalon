@@ -82,7 +82,7 @@ const EventDetails = () => {
 
       <div className="relative h-[500px] overflow-hidden">
         <img
-          src={`${import.meta.env.VITE_API_URL}${event.image}`}
+          src={event.image}
           alt={event.title}
           className="w-full h-full object-cover"
         />
@@ -183,7 +183,7 @@ const EventDetails = () => {
               className="bg-white rounded-3xl overflow-hidden shadow-lg"
             >
               <img
-                src={`${import.meta.env.VITE_API_URL}${item.image}`}
+                src={item.image}
                 alt={item.title}
                 className="w-full h-64 object-cover"
               />

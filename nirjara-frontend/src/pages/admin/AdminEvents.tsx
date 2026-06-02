@@ -67,39 +67,39 @@ const AdminEvents = () => {
   // =============================
   // IMAGE UPLOAD
   // =============================
-const uploadImage = async (
-  e: React.ChangeEvent<HTMLInputElement>
-) => {
-  const file = e.target.files?.[0];
+  const uploadImage = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
 
-  if (!file) return;
+    if (!file) return;
 
-  const data = new FormData();
+    const data = new FormData();
 
-  data.append("image", file);
+    data.append("image", file);
 
-  try {
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/upload`,
-      data,
-      {
-        headers: {
-          "Content-Type":
-            "multipart/form-data",
-        },
-      }
-    );
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/upload`,
+        data,
+        {
+          headers: {
+            "Content-Type":
+              "multipart/form-data",
+          },
+        }
+      );
 
-    console.log(res.data);
+      console.log(res.data);
 
-    setFormData({
-      ...formData,
-      image: res.data.imageUrl,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+      setFormData({
+        ...formData,
+        image: res.data.imageUrl,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // =============================
   // CREATE EVENT
@@ -221,21 +221,21 @@ const uploadImage = async (
   };
 
   // =============================
-// TOGGLE ACTIVE
-// =============================
-const toggleActive = async (
-  id: string
-) => {
-  try {
-    await axios.put(
-      `${import.meta.env.VITE_API_URL}/api/events/${id}/active`
-    );
+  // TOGGLE ACTIVE
+  // =============================
+  const toggleActive = async (
+    id: string
+  ) => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/events/${id}/active`
+      );
 
-    fetchEvents();
-  } catch (error) {
-    console.log(error);
-  }
-};
+      fetchEvents();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="p-6 bg-pink-50 min-h-screen">
@@ -366,11 +366,11 @@ const toggleActive = async (
             className="bg-white rounded-3xl overflow-hidden shadow-xl"
           >
             {/* IMAGE */}
-              <img
-                src={formData.image}
-                alt=""
-                className="w-40 h-40 object-cover rounded-2xl"
-              />
+            <img
+              src={event.image}
+              alt={event.title}
+              className="w-full h-64 object-cover"
+            />
 
             {/* CONTENT */}
             <div className="p-6">
@@ -435,25 +435,26 @@ const toggleActive = async (
 
                 <button
                   onClick={() =>
+                    toggleActive(event._id)
+                  }
+                  className={`px-4 py-2 rounded-xl text-white ${
+                    event.active
+                      ? "bg-orange-500"
+                      : "bg-gray-500"
+                  }`}
+                >
+                  {event.active
+                    ? "Active"
+                    : "Inactive"}
+                </button>
+
+                <button
+                  onClick={() =>
                     deleteEvent(event._id)
                   }
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl"
                 >
                   Delete
-                </button>
-                <button
-                    onClick={() =>
-                        toggleActive(event._id)
-                    }
-                    className={`px-4 py-2 rounded-xl text-white ${
-                        event.active
-                        ? "bg-orange-500"
-                        : "bg-gray-500"
-                    }`}
-                    >
-                    {event.active
-                        ? "Active"
-                        : "Inactive"}
                 </button>
               </div>
             </div>
