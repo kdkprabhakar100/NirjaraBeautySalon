@@ -90,12 +90,12 @@ const uploadImage = async (
       }
     );
 
+    console.log(res.data);
+
     setFormData({
       ...formData,
-      image: res.data.image,
+      image: res.data.imageUrl,
     });
-
-    console.log(res.data);
   } catch (error) {
     console.log(error);
   }
@@ -313,7 +313,7 @@ const toggleActive = async (
 
         {formData.image && (
           <img
-            src={`${import.meta.env.VITE_API_URL}${formData.image}`}
+            src={formData.image}
             alt=""
             className="w-40 h-40 object-cover rounded-2xl"
           />
@@ -366,11 +366,11 @@ const toggleActive = async (
             className="bg-white rounded-3xl overflow-hidden shadow-xl"
           >
             {/* IMAGE */}
-            <img
-              src={`${import.meta.env.VITE_API_URL}${event.image}`}
-              alt={event.title}
-              className="w-full h-64 object-cover"
-            />
+              <img
+                src={formData.image}
+                alt=""
+                className="w-40 h-40 object-cover rounded-2xl"
+              />
 
             {/* CONTENT */}
             <div className="p-6">
