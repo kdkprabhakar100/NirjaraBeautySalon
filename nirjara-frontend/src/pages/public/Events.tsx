@@ -22,6 +22,7 @@ const Events = () => {
   // =============================
   // FETCH EVENTS
   // =============================
+
   const fetchEvents = async () => {
     try {
       const res = await axios.get(
@@ -41,26 +42,28 @@ const Events = () => {
   // =============================
   // FEATURED EVENT
   // =============================
+
   const featuredEvent = events.find(
     (event) => event.featured
   );
 
   return (
-    <div className="bg-pink-50 min-h-screen">
+    <div className="bg-pink-50 min-h-screen overflow-hidden">
       {/* ============================= */}
       {/* HERO SECTION */}
       {/* ============================= */}
 
-      <div className="relative py-10 sm:py-14 md:py-16 flex items-center justify-center bg-gradient-to-r from-pink-100 to-pink-200">
-        <div className="text-center px-4">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-bold text-pink-700 mb-4">
+      <div className="relative overflow-hidden py-16 sm:py-20 lg:py-24 bg-gradient-to-r from-pink-100 to-pink-200">
+        <div className="max-w-5xl mx-auto text-center px-4 flex flex-col items-center justify-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-pink-700 mb-6 leading-tight">
             Nirjara Events
           </h1>
 
-          <p className="text-gray-700 text-sm sm:text-lg max-w-2xl mx-auto">
-            Discover exclusive beauty masterclasses,
-            bridal workshops, academy events, and
-            premium salon experiences.
+          <p className="text-gray-700 text-sm sm:text-lg leading-relaxed max-w-3xl mx-auto">
+            Discover exclusive beauty
+            masterclasses, bridal workshops,
+            academy events, and premium salon
+            experiences.
           </p>
         </div>
       </div>
@@ -72,7 +75,7 @@ const Events = () => {
       {featuredEvent && (
         <section className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-14">
           <div className="mb-8">
-            <span className="bg-pink-600 text-white px-5 py-2 rounded-full text-sm">
+            <span className="bg-pink-600 text-white px-5 py-2 rounded-full text-sm shadow-md">
               Featured Event
             </span>
           </div>
@@ -82,6 +85,7 @@ const Events = () => {
             className="grid lg:grid-cols-2 gap-8 lg:gap-10 bg-white rounded-3xl shadow-xl overflow-hidden"
           >
             {/* IMAGE */}
+
             <div className="overflow-hidden">
               <img
                 src={featuredEvent.image}
@@ -91,8 +95,9 @@ const Events = () => {
             </div>
 
             {/* CONTENT */}
+
             <div className="p-6 md:p-10 flex flex-col justify-center">
-              <h2 className="text-3xl md:text-4xl font-serif font-bold text-pink-700 mb-5">
+              <h2 className="text-3xl md:text-4xl font-serif font-bold text-pink-700 mb-5 leading-tight">
                 {featuredEvent.title}
               </h2>
 
@@ -102,7 +107,8 @@ const Events = () => {
 
               <div className="space-y-2 text-gray-700 mb-8">
                 <p>
-                  📍 {featuredEvent.location}
+                  📍{" "}
+                  {featuredEvent.location}
                 </p>
 
                 <p>
@@ -113,13 +119,14 @@ const Events = () => {
                 </p>
 
                 <p>
-                  ⏰ {featuredEvent.time}
+                  ⏰{" "}
+                  {featuredEvent.time}
                 </p>
               </div>
 
               <Link
                 to={`/events/${featuredEvent._id}`}
-                className="bg-pink-600 hover:bg-pink-700 transition text-white px-8 py-4 rounded-xl w-fit"
+                className="bg-pink-600 hover:bg-pink-700 transition text-white px-8 py-4 rounded-xl w-fit shadow-md"
               >
                 View Details
               </Link>
@@ -133,7 +140,7 @@ const Events = () => {
       {/* ============================= */}
 
       <section className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 md:py-14">
-        <h2 className="text-3xl md:text-4xl font-serif font-bold text-center text-pink-700 mb-10 md:mb-14">
+        <h2 className="text-3xl md:text-5xl font-serif font-bold text-center text-pink-700 mb-10 md:mb-14 leading-tight">
           Upcoming Events
         </h2>
 
@@ -147,10 +154,11 @@ const Events = () => {
               <motion.div
                 key={event._id}
                 whileHover={{ y: -8 }}
-                className="group bg-white rounded-3xl overflow-hidden shadow-lg w-full h-full flex flex-col"
+                className="group bg-white rounded-3xl overflow-hidden shadow-lg flex flex-col h-full"
               >
                 {/* IMAGE */}
-                <div className="relative overflow-hidden rounded-t-3xl">
+
+                <div className="relative overflow-hidden">
                   <img
                     src={event.image}
                     alt={event.title}
@@ -165,8 +173,9 @@ const Events = () => {
                 </div>
 
                 {/* CONTENT */}
+
                 <div className="p-5 md:p-6 flex flex-col flex-1">
-                  <h3 className="text-2xl font-serif font-bold text-pink-700 mb-3">
+                  <h3 className="text-2xl font-serif font-bold text-pink-700 mb-3 leading-tight">
                     {event.title}
                   </h3>
 
@@ -185,10 +194,11 @@ const Events = () => {
                   </div>
 
                   {/* BUTTON */}
-                  <div className="mt-auto pt-4">
+
+                  <div className="mt-auto">
                     <Link
                       to={`/events/${event._id}`}
-                      className="inline-block bg-pink-600 hover:bg-pink-700 transition text-white px-6 py-3 rounded-xl"
+                      className="inline-block bg-pink-600 hover:bg-pink-700 transition text-white px-6 py-3 rounded-xl shadow-md"
                     >
                       View Details
                     </Link>
