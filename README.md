@@ -138,3 +138,7 @@ frontend/
 │   │       └── AdminEvents.tsx
 │   │
 │   └── App.tsx
+
+
+## Event page added
+## Admin Upgrade
