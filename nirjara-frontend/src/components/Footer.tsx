@@ -8,6 +8,7 @@ export default function Footer() {
     { label: "Academy", path: "/academy" },
     { label: "Blog", path: "/blog" },
     { label: "Contact", path: "/contact" },
+    { label: "Careers", path: "/careers" },
   ];
 
   return (

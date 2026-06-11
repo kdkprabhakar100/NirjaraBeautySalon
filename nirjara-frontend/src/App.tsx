@@ -18,6 +18,7 @@ import Blog from "./pages/public/Blog";
 import Contact from "./pages/public/Contact";
 import Gallery from "./components/Gallery";
 import Booking from "./pages/public/Booking";
+import Careers from "./pages/public/Careers";
 
 // ADMIN
 import Login from "./pages/admin/Login";
@@ -29,6 +30,7 @@ import GalleryAdmin from "./pages/admin/GalleryAdmin";
 import CoursesAdmin from "./pages/admin/CoursesAdmin";
 import ContactMessagesAdmin from "./pages/admin/ContactMessagesAdmin";
 import BlogAdmin from "./pages/admin/BlogAdmin";
+import AdminCareers from "./pages/admin/AdminCareers";
 
 // PRODUCTS
 import Products from "./pages/product/Products";
@@ -194,14 +196,15 @@ export default function App() {
             </PublicLayout>
           }
         />
-        <Route
-          path="/events"
-          element={
-            <PublicLayout>
-              <Events />
-            </PublicLayout>
-          }
-        />
+        <Route 
+
+        path="/careers"
+         element={
+          <PublicLayout>
+           <Careers />
+          </PublicLayout>
+         } 
+         />
         <Route
           path="/events/:id"
           element={
@@ -319,6 +322,14 @@ export default function App() {
           element={
             <AdminLayout>
               <AdminEvents />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/careers"
+          element={
+            <AdminLayout>
+              <AdminCareers />
             </AdminLayout>
           }
         />

@@ -15,6 +15,7 @@ const contactRoutes = require("./routes/contactRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const productRoutes = require("./routes/productRoutes");
+const careerRoutes = require("./routes/careerRoutes");
 
 
 // Auth routes
@@ -52,7 +53,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/popup", popupRoutes);
 app.use("/api/events", eventRoutes);
-
+app.use("/api/careers", careerRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
