@@ -18,6 +18,7 @@ import Blog from "./pages/public/Blog";
 import Contact from "./pages/public/Contact";
 import Gallery from "./components/Gallery";
 import Booking from "./pages/public/Booking";
+import Events from "./pages/public/Events";
 import Careers from "./pages/public/Careers";
 
 // ADMIN
@@ -48,7 +49,7 @@ import AdminPopup from "./pages/admin/AdminPopup";
 
 //Admin Events
 import AdminEvents from "./pages/admin/AdminEvents";
-import Events from "./pages/public/Events";
+//import Events from "./pages/public/Events";
 import EventDetails from "./pages/public/EventDetails";
 
 function PublicLayout({
@@ -193,6 +194,32 @@ export default function App() {
           element={
             <PublicLayout>
               <Checkout />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/events"
+          element={
+            <PublicLayout>
+              <Events />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/events/:id"
+          element={
+            <PublicLayout>
+              <EventDetails />
+            </PublicLayout>
+          }
+        />        
+          {/* ACADEMY */}
+        <Academy />
+         <Route
+          path="/events"
+          element={
+            <PublicLayout>
+              <Events />
             </PublicLayout>
           }
         />
