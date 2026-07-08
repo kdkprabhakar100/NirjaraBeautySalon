@@ -3,12 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.4",
     "axios": "^1.16.1",
@@ -36,7 +30,9 @@
     "vite": "^5.4.10"
   },
   "scripts": {
-  "generate-sitemap": "node scripts/generate-sitemap.cjs",
-  "build": "npm run generate-sitemap && vite build"
-}
+    "dev": "vite",
+    "generate-sitemap": "node scripts/generate-sitemap.cjs",
+    "build": "npm run generate-sitemap && vite build",
+    "preview": "vite preview"
+  }
 }
