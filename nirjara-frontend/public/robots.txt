@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nirjarabeautysalon.vercel.app/sitemap.xml
