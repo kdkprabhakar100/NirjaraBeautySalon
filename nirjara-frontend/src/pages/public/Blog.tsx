@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 type Blog = {
   _id: string;
   title: string;
@@ -124,7 +123,9 @@ export default function Blog() {
             </p>
           )}
         </div>
+
       </section>
+
     </main>
   );
 }
