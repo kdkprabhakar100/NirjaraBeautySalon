@@ -50,3 +50,9 @@ export default tseslint.config({
 ```
 #install 
 npm install
+
+#backend
+server.js
+
+#frontend
+npm run dev
