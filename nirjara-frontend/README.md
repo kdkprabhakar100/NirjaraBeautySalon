@@ -6,3 +6,8 @@ server.js
 
 #frontend
 npm run dev
+
+#sitemap
+#robots.txt
+#llms
+
