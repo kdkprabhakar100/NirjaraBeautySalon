@@ -18,6 +18,7 @@ const adminLinks = [
   { label: "Popups", path: "/admin/popup" },
   { label: "Events", path: "/admin/events" },
   { label: "Careers", path: "/admin/careers" },
+  { label: "Settings", path: "/admin/settings" },
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
