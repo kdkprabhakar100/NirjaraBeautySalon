@@ -1,4 +1,3 @@
-import { label } from "framer-motion/client";
 import { NavLink, useNavigate } from "react-router-dom";
 
 type AdminLayoutProps = {
@@ -21,7 +20,9 @@ const adminLinks = [
   { label: "Settings", path: "/admin/settings" },
 ];
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function AdminLayout({
+  children,
+}: AdminLayoutProps) {
   const navigate = useNavigate();
 
   const logout = () => {
@@ -32,31 +33,46 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <main className="min-h-screen bg-[#FFF5F8] text-[#3A2A2F]">
-      {/* Mobile Navbar */}
+      {/* MOBILE NAVBAR */}
       <nav className="flex items-center justify-between bg-white px-4 py-4 shadow-sm md:hidden">
-        <h1 className="font-serif text-xl text-[#E75480]">Nirjara Admin</h1>
+        <h1 className="font-serif text-xl text-[#E75480]">
+          Nirjara Admin
+        </h1>
 
         <select
-          onChange={(e) => navigate(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value) {
+              navigate(e.target.value);
+            }
+          }}
           className="rounded-xl border border-[#E75480]/20 bg-[#FFF5F8] px-3 py-2 text-sm outline-none"
           defaultValue=""
         >
           <option value="" disabled>
             Menu
           </option>
+
           {adminLinks.map((link) => (
-            <option key={link.path} value={link.path}>
+            <option
+              key={link.path}
+              value={link.path}
+            >
               {link.label}
             </option>
           ))}
-          <option value="/">View Website</option>
+
+          <option value="/">
+            View Website
+          </option>
         </select>
       </nav>
 
-      <div className="flex">
-        {/* Desktop Sidebar */}
-        <aside className="hidden min-h-screen w-64 border-r border-[#E75480]/10 bg-white p-6 md:block">
-          <h1 className="font-serif text-2xl text-[#E75480]">Nirjara Admin</h1>
+      <div className="flex min-h-screen">
+        {/* DESKTOP SIDEBAR */}
+        <aside className="hidden w-64 shrink-0 border-r border-[#E75480]/10 bg-white p-6 md:block">
+          <h1 className="font-serif text-2xl text-[#E75480]">
+            Nirjara Admin
+          </h1>
 
           <div className="mt-10 space-y-3">
             {adminLinks.map((link) => (
@@ -77,6 +93,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           <button
+            type="button"
             onClick={() => navigate("/")}
             className="mt-10 w-full rounded-xl border border-[#E75480] px-4 py-3 text-sm text-[#E75480]"
           >
@@ -84,6 +101,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </button>
 
           <button
+            type="button"
             onClick={logout}
             className="mt-4 w-full rounded-xl bg-[#FCE7EF] px-4 py-3 text-sm text-[#E75480]"
           >
@@ -91,7 +109,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </button>
         </aside>
 
-        <section className="flex-1 p-4 md:p-8">{children}</section>
+        {/* PAGE CONTENT */}
+        <section className="min-w-0 flex-1 p-4 md:p-8">
+          {children}
+        </section>
       </div>
     </main>
   );

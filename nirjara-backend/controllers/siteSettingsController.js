@@ -1,6 +1,9 @@
-import SiteSettings from "../models/SiteSettings.js";
+const SiteSettings = require("../models/SiteSettings");
 
-export const getSiteSettings = async (req, res) => {
+// =============================
+// GET SITE SETTINGS
+// =============================
+const getSiteSettings = async (req, res) => {
   try {
     let settings = await SiteSettings.findOne();
 
@@ -12,9 +15,7 @@ export const getSiteSettings = async (req, res) => {
           "A professional beauty salon and academy offering salon services, beauty training, and customer-focused care in Kathmandu.",
 
         email: "",
-
         phone: "",
-
         whatsapp: "",
 
         branches: [
@@ -50,41 +51,66 @@ export const getSiteSettings = async (req, res) => {
       });
     }
 
-    res.status(200).json(settings);
+    res.json(settings);
   } catch (error) {
-    console.error("Get settings error:", error);
+    console.error("GET SETTINGS ERROR:", error);
 
     res.status(500).json({
-      message: "Unable to load site settings.",
+      message: error.message,
     });
   }
 };
 
-export const updateSiteSettings = async (req, res) => {
+// =============================
+// UPDATE SITE SETTINGS
+// =============================
+const updateSiteSettings = async (req, res) => {
   try {
     let settings = await SiteSettings.findOne();
 
     if (!settings) {
-      settings = await SiteSettings.create(req.body);
+      settings = new SiteSettings(req.body);
+    } else {
+      settings.salonName =
+        req.body.salonName ?? settings.salonName;
 
-      return res.status(201).json(settings);
+      settings.description =
+        req.body.description ?? settings.description;
+
+      settings.email =
+        req.body.email ?? settings.email;
+
+      settings.phone =
+        req.body.phone ?? settings.phone;
+
+      settings.whatsapp =
+        req.body.whatsapp ?? settings.whatsapp;
+
+      if (req.body.branches !== undefined) {
+        settings.branches = req.body.branches;
+      }
+
+      if (req.body.socialLinks !== undefined) {
+        settings.socialLinks = {
+          ...settings.socialLinks.toObject?.(),
+          ...req.body.socialLinks,
+        };
+      }
     }
 
-    settings = await SiteSettings.findByIdAndUpdate(
-      settings._id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const updatedSettings = await settings.save();
 
-    res.status(200).json(settings);
+    res.json(updatedSettings);
   } catch (error) {
-    console.error("Update settings error:", error);
+    console.error("UPDATE SETTINGS ERROR:", error);
 
-    res.status(500).json({
-      message: "Unable to update site settings.",
+    res.status(400).json({
+      message: error.message,
     });
   }
+};
+
+module.exports = {
+  getSiteSettings,
+  updateSiteSettings,
 };

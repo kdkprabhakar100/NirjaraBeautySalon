@@ -1,9 +1,9 @@
-import express from "express";
+const express = require("express");
 
-import {
+const {
   getSiteSettings,
   updateSiteSettings,
-} from "../controllers/siteSettingsController.js";
+} = require("../controllers/siteSettingsController");
 
 const router = express.Router();
 
@@ -11,4 +11,4 @@ router.get("/", getSiteSettings);
 
 router.put("/", updateSiteSettings);
 
-export default router;
+module.exports = router;
