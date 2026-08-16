@@ -17,6 +17,7 @@ const blogRoutes = require("./routes/blogRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const productRoutes = require("./routes/productRoutes");
 const careerRoutes = require("./routes/careerRoutes");
+
 const siteSettingsRoutes = require("./routes/siteSettingsRoutes");
 
 // AUTH
