@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const branchSchema = new mongoose.Schema(
   {
@@ -97,7 +97,7 @@ const siteSettingsSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model(
+module.exports = mongoose.model(
   "SiteSettings",
   siteSettingsSchema
 );
