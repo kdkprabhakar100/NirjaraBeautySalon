@@ -45,12 +45,16 @@ router.post("/", async (req, res) => {
 
 
 // UPDATE BOOKING STATUS
+// UPDATE BOOKING STATUS
 router.put("/:id", protect, async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
     if (!booking) {
@@ -59,97 +63,97 @@ router.put("/:id", protect, async (req, res) => {
       });
     }
 
-    // SEND EMAIL
+    // RESPOND TO FRONTEND IMMEDIATELY
+    res.status(200).json({
+      message: "Booking updated successfully",
+      booking,
+    });
+
+    // SEND EMAIL AFTER RESPONSE
     if (booking.email) {
-      try {
-        const item =
-          booking.type === "course"
-            ? booking.course
-            : booking.service;
+      const item =
+        booking.type === "course"
+          ? booking.course
+          : booking.service;
 
-        const subject = `Booking ${booking.status} - Nirjara Beauty`;
+      const subject = `Booking ${booking.status} - Nirjara Beauty`;
 
-        const html = `
-          <div style="font-family: Arial, sans-serif; background-color: #fff5f8; padding: 30px;">
-            
-            <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 18px;">
+      const html = `
+        <div style="font-family: Arial, sans-serif; background-color: #fff5f8; padding: 30px;">
+          <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 18px;">
 
-              <h2 style="color: #E75480; margin-bottom: 10px;">
-                Nirjara Beauty
-              </h2>
+            <h2 style="color: #E75480; margin-bottom: 10px;">
+              Nirjara Beauty
+            </h2>
+
+            <p>
+              Hello <strong>${booking.name}</strong>,
+            </p>
+
+            <p>
+              Your ${
+                booking.type === "course"
+                  ? "course enrollment"
+                  : "service booking"
+              } for
+
+              <strong>${item}</strong> has been
+
+              <strong style="color:${
+                booking.status === "Confirmed"
+                  ? "green"
+                  : booking.status === "Cancelled"
+                  ? "red"
+                  : "#E75480"
+              };">
+                ${booking.status}
+              </strong>.
+            </p>
+
+            <div style="margin-top:20px; padding:15px; background:#fff5f8; border-radius:12px;">
+              <p>
+                <strong>Branch:</strong>
+                ${booking.branch}
+              </p>
 
               <p>
-                Hello <strong>${booking.name}</strong>,
+                <strong>Date:</strong>
+                ${booking.date}
               </p>
 
               <p>
-                Your ${
-                  booking.type === "course"
-                    ? "course enrollment"
-                    : "service booking"
-                } for 
-                
-                <strong>${item}</strong> has been
-
-                <strong style="color:${
-                  booking.status === "Confirmed"
-                    ? "green"
-                    : booking.status === "Cancelled"
-                    ? "red"
-                    : "#E75480"
-                };">
-                  ${booking.status}
-                </strong>.
+                <strong>Time:</strong>
+                ${booking.time}
               </p>
-
-              <div style="margin-top:20px; padding:15px; background:#fff5f8; border-radius:12px;">
-                
-                <p>
-                  <strong>Branch:</strong>
-                  ${booking.branch}
-                </p>
-
-                <p>
-                  <strong>Date:</strong>
-                  ${booking.date}
-                </p>
-
-                <p>
-                  <strong>Time:</strong>
-                  ${booking.time}
-                </p>
-
-              </div>
-
-              <p style="margin-top:25px;">
-                Thank you for choosing Nirjara Beauty 💖
-              </p>
-
             </div>
 
-          </div>
-        `;
+            <p style="margin-top:25px;">
+              Thank you for choosing Nirjara Beauty 💖
+            </p>
 
-        await sendEmail(
-          booking.email,
-          subject,
-          html
-        );
-      } catch (emailError) {
+          </div>
+        </div>
+      `;
+
+      sendEmail(
+        booking.email,
+        subject,
+        html
+      ).catch((emailError) => {
         console.log(
           "EMAIL ERROR:",
           emailError
         );
-      }
+      });
     }
-
-    res.json(booking);
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
-      message: error.message,
-    });
+    if (!res.headersSent) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
   }
 });
 
