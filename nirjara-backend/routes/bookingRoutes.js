@@ -135,16 +135,23 @@ router.put("/:id", protect, async (req, res) => {
         </div>
       `;
 
-      sendEmail(
-        booking.email,
-        subject,
-        html
-      ).catch((emailError) => {
-        console.log(
-          "EMAIL ERROR:",
-          emailError
-        );
-      });
+sendEmail(
+  booking.email,
+  subject,
+  html
+)
+  .then(() => {
+    console.log(
+      "EMAIL SENT SUCCESSFULLY TO:",
+      booking.email
+    );
+  })
+  .catch((emailError) => {
+    console.error(
+      "EMAIL ERROR:",
+      emailError
+    );
+  });
     }
   } catch (error) {
     console.log(error);
