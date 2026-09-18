@@ -1,48 +1,22 @@
 const express = require("express");
-
-const protect = require(
-  "../middleware/authMiddleware"
-);
+const router = express.Router();
 
 const {
   getTeamMembers,
-  getPublicTeamMembers,
   createTeamMember,
   updateTeamMember,
   deleteTeamMember,
   reorderTeamMembers,
 } = require("../controllers/teamController");
 
-const router = express.Router();
+router.get("/", getTeamMembers);
 
-// PUBLIC
-router.get("/public", getPublicTeamMembers);
+router.post("/", createTeamMember);
 
-// ADMIN
-router.get("/", protect, getTeamMembers);
+router.put("/reorder", reorderTeamMembers);
 
-router.post(
-  "/",
-  protect,
-  createTeamMember
-);
+router.put("/:id", updateTeamMember);
 
-router.put(
-  "/reorder",
-  protect,
-  reorderTeamMembers
-);
-
-router.put(
-  "/:id",
-  protect,
-  updateTeamMember
-);
-
-router.delete(
-  "/:id",
-  protect,
-  deleteTeamMember
-);
+router.delete("/:id", deleteTeamMember);
 
 module.exports = router;
