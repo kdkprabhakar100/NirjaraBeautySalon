@@ -12,21 +12,33 @@ const {
 } = require("../controllers/teamController");
 
 // =============================
-// PUBLIC TEAM
+// PUBLIC TEAM MEMBERS
 // =============================
 router.get("/public", getPublicTeamMembers);
 
 // =============================
-// ADMIN TEAM
+// ADMIN - GET ALL TEAM MEMBERS
 // =============================
 router.get("/", getTeamMembers);
 
+// =============================
+// CREATE TEAM MEMBER
+// =============================
 router.post("/", createTeamMember);
 
+// =============================
+// REORDER TEAM MEMBERS
+// =============================
 router.put("/reorder", reorderTeamMembers);
 
+// =============================
+// UPDATE TEAM MEMBER
+// =============================
 router.put("/:id", updateTeamMember);
 
+// =============================
+// DELETE TEAM MEMBER
+// =============================
 router.delete("/:id", deleteTeamMember);
 
 module.exports = router;
