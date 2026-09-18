@@ -17,6 +17,7 @@ const blogRoutes = require("./routes/blogRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const productRoutes = require("./routes/productRoutes");
 const careerRoutes = require("./routes/careerRoutes");
+const teamRoutes = require("./routes/teamRoutes");
 
 const siteSettingsRoutes = require("./routes/siteSettingsRoutes");
 
@@ -40,30 +41,16 @@ const isProduction =
 // =============================
 // CORS
 // =============================
-
 const allowedOrigins = [
-  // Local development
   "http://localhost:5173",
-  "http://localhost:5174",
-
-  // Public website
-  "https://nirjarabeautysalon.vercel.app",
-
-  // Optional custom website domains
   process.env.FRONTEND_URL,
   process.env.FRONTEND_WWW_URL,
-
-  // Separate admin frontend
-  process.env.ADMIN_URL,
 ].filter(Boolean);
-
-console.log("Allowed CORS origins:", allowedOrigins);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests without browser origin:
-      // Postman, curl, server-to-server, etc.
+      // Allow Postman, mobile apps, curl, server-to-server requests
       if (!origin) {
         return callback(null, true);
       }
@@ -75,7 +62,7 @@ app.use(
       console.log("Blocked by CORS:", origin);
 
       return callback(
-        new Error(`Not allowed by CORS: ${origin}`)
+        new Error("Not allowed by CORS")
       );
     },
 
@@ -96,6 +83,7 @@ app.use(
     ],
   })
 );
+
 // =============================
 // MIDDLEWARE
 // =============================
@@ -148,6 +136,7 @@ app.use(
   "/api/site-settings",
   siteSettingsRoutes
 );
+app.use("/api/teams", teamRoutes);
 
 // =============================
 // 404 HANDLER
