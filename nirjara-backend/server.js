@@ -139,7 +139,7 @@ app.use(
   "/api/site-settings",
   siteSettingsRoutes
 );
-app.use("/api/teams", teamRoutes);
+app.use("/api/team", teamRoutes);
 
 // =============================
 // 404 HANDLER
