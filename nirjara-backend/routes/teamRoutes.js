@@ -1,14 +1,24 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
   getTeamMembers,
+  getPublicTeamMembers,
   createTeamMember,
   updateTeamMember,
   deleteTeamMember,
   reorderTeamMembers,
 } = require("../controllers/teamController");
 
+// =============================
+// PUBLIC TEAM
+// =============================
+router.get("/public", getPublicTeamMembers);
+
+// =============================
+// ADMIN TEAM
+// =============================
 router.get("/", getTeamMembers);
 
 router.post("/", createTeamMember);
