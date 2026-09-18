@@ -43,8 +43,11 @@ const isProduction =
 // =============================
 const allowedOrigins = [
   "http://localhost:5173",
+    // Admin frontend
+  "http://localhost:5174",
   process.env.FRONTEND_URL,
   process.env.FRONTEND_WWW_URL,
+  process.env.ADMIN_FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(
