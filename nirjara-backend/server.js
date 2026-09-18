@@ -139,7 +139,8 @@ app.use(
   "/api/site-settings",
   siteSettingsRoutes
 );
-app.use("/api/team", teamRoutes);
+console.log("REGISTERING /api/teams ROUTE");
+app.use("/api/teams", teamRoutes);
 
 // =============================
 // 404 HANDLER
@@ -196,3 +197,7 @@ mongoose
 
     process.exit(1);
   });
+  console.log("=================================");
+console.log("RUNNING SERVER FILE:", __filename);
+console.log("TEAM ROUTES LOADED:", !!teamRoutes);
+console.log("=================================");
